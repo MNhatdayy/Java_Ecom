@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${title} ?: 'Your Cart'">Your Cart</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<section layout:fragment="content" class="container mt-3">
+    <h1>Your Cart</h1>
+    <div th:if="${cartItems.isEmpty()}" class="alert alert-info">Your cart is
+        empty.</div>
+
+    <table class="table" th:unless="${cartItems.isEmpty()}">
+        <thead class="table-light">
+        <tr>
+            <th>Product Name</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cartItems}">
+            <td th:text="${item.product.name}"></td>
+            <td>
+                <img th:src="@{'/images/' + ${item.product.imageUrl}}" class="card-img-top" alt="..." height="200px" width="170px">
+            </td>
+            <td>
+                <div class="input-group">
+                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(${item.product.id}, -1)">-</button>
+                    <input type="text" class="form-control text-center" id="quantity-${item.product.id}" th:value="${item.quantity}" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(${item.product.id}, 1)">+</button>
+                </div>
+            </td>
+            <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+            <td>
+                <a th:href="@{/cart/remove/{productId}(productId=${item.product.id})}" class="btn btn-danger btn-sm">Remove</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="row mt-3">
+        <div class="col-6">
+            <div style="margin-bottom:10px">
+                <a th:href="@{/cart/clear}" class="btn btn-secondary">Clear Cart</a>
+            </div>
+            <div>
+                <a th:href="@{/order/checkout}" class="btn btn-primary mb-3">Check Out</a>
+            </div>
+        </div>
+        <div class="col-6">
+            <h3 th:text="'Total: ' + ${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h3>
+        </div>
+    </div>
+</section>
+
+<script>
+    function updateQuantity(productId, change) {
+        const quantityElement = document.getElementById(`quantity-${productId}`);
+        let currentQuantity = parseInt(quantityElement.value);
+
+        // Tính toán số lượng mới
+        const newQuantity = currentQuantity + change;
+
+        // Kiểm tra số lượng mới có hợp lệ không
+        if (newQuantity < 1) {
+            alert("Số lượng không thể nhỏ hơn 1");
+            return;
+        }
+
+        // Gửi yêu cầu cập nhật số lượng đến server
+        fetch(`/update-cart`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: productId,
+                quantity: newQuantity
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cập nhật số lượng mới trên giao diện
+                    quantityElement.value = newQuantity;
+                } else {
+                    alert("Không thể cập nhật số lượng. Lỗi: " + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+</body>
+</html>
