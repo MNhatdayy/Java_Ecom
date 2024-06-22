@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import "./navbar.scss";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Input } from "antd";
 
 import { Menu } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { logout, parseToken } from "../../../services/AuthController";
 
 const { Search } = Input;
 
@@ -46,11 +48,29 @@ const MenuStyle = {
 };
 
 const NavbarComponent = () => {
+	const [isLoggedIn, setLogin] = useState(false);
+	const [userName, setUsername] = useState("");
 	const [current, setCurrent] = useState("home");
+	const navigate = useNavigate();
 	const onClick = (e) => {
-		console.log("click ", e);
 		setCurrent(e.key);
 	};
+
+	const logOut = () => {
+		logout();
+		setLogin(false);
+		setUsername("");
+		return navigate("/");
+	};
+
+	useEffect(() => {
+		const tokenInfo = parseToken();
+		if (tokenInfo !== null) {
+			setLogin(true);
+			setUsername(tokenInfo.username);
+		}
+	}, []);
+
 	return (
 		<div className="navbar--wrapper">
 			<div className="navbar">
@@ -70,11 +90,31 @@ const NavbarComponent = () => {
 				<div className="navbar--actions">
 					<div className="navbar--search"></div>
 					<div className="navbar--auth">
-						<Link to={"/auth/login"}>
-							<Button type="primary" shape="round">
-								Login
-							</Button>
-						</Link>
+						{isLoggedIn ? (
+							<>
+								<div className="user--wrapper">
+									<p className="username">
+										Hi, <span>{userName}</span>
+									</p>
+
+									<Button
+										type="primary"
+										size="small"
+										onClick={logOut}
+										shape="round">
+										<i
+											className="fa fa-arrow-circle-right"
+											aria-hidden="true"></i>
+									</Button>
+								</div>
+							</>
+						) : (
+							<Link to={"/auth/login"}>
+								<Button type="primary" shape="round">
+									Login
+								</Button>
+							</Link>
+						)}
 					</div>
 					<div className="navbar--liked">
 						<Link to={"/liked"}>

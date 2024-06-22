@@ -5,6 +5,7 @@ import com.HutechB6.Ecommerce.model.User;
 import com.HutechB6.Ecommerce.repository.IUserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,9 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(User request) {
+        if (request.getUsername().isEmpty()) {
+            throw new UsernameNotFoundException("Username not found");
+        }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),

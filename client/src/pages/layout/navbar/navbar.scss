@@ -78,6 +78,18 @@
 	gap: 24px;
 }
 
+.user--wrapper {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.username {
+	color: black;
+	display: flex;
+	gap: 2px;
+}
+
 .navbar--search {
 	display: flex;
 	align-items: center;

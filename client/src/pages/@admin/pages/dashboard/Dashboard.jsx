@@ -1,12 +1,8 @@
 import { Card, Statistic, Button } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
 
-import ProductServices from "../../../../services/product.service";
-
 const Dashboard = () => {
-	const onClick = function () {
-		ProductServices.getListProduct();
-	};
+	const onClick = function () {};
 
 	return (
 		<>

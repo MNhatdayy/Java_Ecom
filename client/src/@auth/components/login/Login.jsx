@@ -1,15 +1,22 @@
 import { Link } from "react-router-dom";
 import "./login.scss";
-
+import { useNavigate } from "react-router-dom";
 import { Button, Checkbox, Form, Input } from "antd";
 
-const login = async (values) => {
-	console.log(values.username);
-	console.log(values.password);
-	console.log(values.remember);
-};
+import { login } from "../../../services/AuthController";
 
 const Login = () => {
+	const navigate = useNavigate();
+	const loginFunction = async (values) => {
+		login(values.username, values.password).then((value) => {
+			if (value) {
+				return navigate("/shop");
+			} else {
+				return navigate("/login");
+			}
+		});
+	};
+
 	return (
 		<div className="wrapper">
 			<h3>Welcome to my shop</h3>
@@ -29,7 +36,7 @@ const Login = () => {
 					remember: true,
 				}}
 				autoComplete="off"
-				onFinish={login}>
+				onFinish={loginFunction}>
 				<Form.Item
 					label="Username"
 					name="username"

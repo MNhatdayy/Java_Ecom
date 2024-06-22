@@ -4,10 +4,8 @@ import com.HutechB6.Ecommerce.model.AuthenticationResponse;
 import com.HutechB6.Ecommerce.model.User;
 import com.HutechB6.Ecommerce.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AuthenticationController {
@@ -17,17 +15,20 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody User request
             ){
        return  ResponseEntity.ok(authenticationService.register(request));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody User request
-    ){
+            ){
+        if (request.getUsername().isEmpty() || request.getPassword().isEmpty()) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

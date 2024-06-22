@@ -38,6 +38,11 @@ public class User implements UserDetails {
     @Email
     private String email;
 
+    @Column(name = "phone", length = 50, unique = true)
+    @NotBlank(message = "Username is required")
+    @Size(min = 1, max = 50, message = "Phone must be between 1 and 50 characters")
+    private String phone;
+
     @Enumerated(value = EnumType.STRING)
     Role role;
 

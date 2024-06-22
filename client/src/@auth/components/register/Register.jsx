@@ -1,14 +1,33 @@
 import "./register.scss";
 
 import { Button, Form, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const register = async (values) => {
-	console.log(values.username);
-	console.log(values.password);
-};
+import { register } from "../../../services/AuthController";
 
 const Register = () => {
+	const navigate = useNavigate();
+
+	const registerFunction = async (values) => {
+		if (values.password !== values.confirmPassword) {
+			values = {};
+			console.log("2 Mật khẩu không trùng khớp với nhau");
+			return false;
+		} else {
+			register(
+				values.username,
+				values.email,
+				values.password,
+				values.phone
+			).then((value) => {
+				if (value) {
+					return navigate("/auth/login");
+				} else {
+					return navigate("/auth/register");
+				}
+			});
+		}
+	};
 	return (
 		<div className="wrapper">
 			<h3>Welcome to my shop</h3>
@@ -28,7 +47,7 @@ const Register = () => {
 					remember: true,
 				}}
 				autoComplete="off"
-				onFinish={register}>
+				onFinish={registerFunction}>
 				<Form.Item
 					label="Username"
 					name="username"

@@ -57,15 +57,24 @@ import LayoutShop from "./pages/layout/LayoutShop.jsx";
 import HomePage from "./pages/home/HomePage.jsx";
 import ShopCategory from "./pages/shop/ShopCategory.jsx";
 
-import AuthServices from "./services/auth.service.js";
 import ProductDetail from "./pages/shop/ProductDetail/ProductDetail.jsx";
 import Liked from "./pages/liked/Liked.jsx";
 import Cart from "./pages/cart/Cart.jsx";
 
+import { login, parseToken } from "./services/AuthController.js";
+import { useEffect, useState } from "react";
+
 function App() {
 	// const [count, setCount] = useState(0)
-	AuthServices.login();
-	const role = AuthServices.parseToken().role;
+	const [isLoggedIn, setLogin] = useState(false);
+	const [role, setRole] = useState("");
+	useEffect(() => {
+		const tokenInfo = parseToken();
+		if (tokenInfo !== null) {
+			setLogin(true);
+			setRole(tokenInfo.role);
+		}
+	}, []);
 	return (
 		<ConfigProvider
 			theme={{
@@ -81,7 +90,7 @@ function App() {
 			<div className="full">
 				<Router>
 					<Routes>
-						{role === "1" && (
+						{role === "ADMIN" && (
 							<Route path="/admin/*" element={<LayoutAdmin />}>
 								<Route index element={<Dashboard />} />
 								<Route
