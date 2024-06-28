@@ -10,7 +10,6 @@ const headerStyle = {
 	backgroundColor: "white",
 };
 const contentStyle = {
-	textAlign: "center",
 	minHeight: 100,
 	color: "#fff",
 	marginTop: 24,
@@ -18,23 +17,23 @@ const contentStyle = {
 };
 
 const footerStyle = {
-	textAlign: "center",
 	color: "#fff",
 	backgroundColor: "#4096ff",
 };
 const layoutStyle = {
 	borderRadius: 8,
-	overflow: "hidden",
 	width: "100%",
-	height: "100vh",
 };
 
 import HeaderComponent from "./HeaderComponent";
 import FooterComponent from "./FooterComponent";
 import HomePage from "../home/HomePage";
-import ShopCategory from "../shop/ShopCategory";
+import ShopCategory from "../shop/ShopByCategory/ShopCategory";
 import Liked from "../liked/Liked";
 import Cart from "../cart/Cart";
+import Contact from "../shop/Contact/Contact";
+
+import ProductDetail from "../shop/ProductDetail/ProductDetail";
 
 const LayoutShop = () => {
 	return (
@@ -62,12 +61,19 @@ const LayoutShop = () => {
 										element={<ShopCategory />}
 									/>
 									<Route
-										path="asscessories"
+										path="accessories"
 										element={<ShopCategory />}
 									/>
+									<Route
+										path=":id"
+										element={<ProductDetail />}
+									/>
+									<Route path="*" element={<HomePage />} />
 								</Route>
 								<Route path="/liked" element={<Liked />} />
 								<Route path="/cart" element={<Cart />} />
+								<Route path="contact" element={<Contact />} />
+								<Route path="*" element={<HomePage />} />
 							</Routes>
 						</Content>
 						<Footer style={footerStyle}>

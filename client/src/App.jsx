@@ -55,11 +55,12 @@ import Products from "./pages/@admin/pages/management/products/Products.jsx";
 
 import LayoutShop from "./pages/layout/LayoutShop.jsx";
 import HomePage from "./pages/home/HomePage.jsx";
-import ShopCategory from "./pages/shop/ShopCategory.jsx";
+import ShopCategory from "./pages/shop/ShopByCategory/ShopCategory.jsx";
 
 import ProductDetail from "./pages/shop/ProductDetail/ProductDetail.jsx";
 import Liked from "./pages/liked/Liked.jsx";
 import Cart from "./pages/cart/Cart.jsx";
+import Contact from "./pages/shop/Contact/Contact.jsx";
 
 import { login, parseToken } from "./services/AuthController.js";
 import { useEffect, useState } from "react";
@@ -73,6 +74,7 @@ function App() {
 		if (tokenInfo !== null) {
 			setLogin(true);
 			setRole(tokenInfo.role);
+			console.log(role);
 		}
 	}, []);
 	return (
@@ -93,6 +95,8 @@ function App() {
 						{role === "ADMIN" && (
 							<Route path="/admin/*" element={<LayoutAdmin />}>
 								<Route index element={<Dashboard />} />
+								<Route path="" element={<Dashboard />} />
+
 								<Route
 									path="dashboard"
 									element={<Dashboard />}
@@ -120,7 +124,7 @@ function App() {
 									element={<ShopCategory />}
 								/>
 								<Route
-									path="asscessories"
+									path="accessories"
 									element={<ShopCategory />}
 								/>
 							</Route>
@@ -128,6 +132,7 @@ function App() {
 						<Route path="" element={<LayoutShop />}>
 							<Route index element={<HomePage />} />
 							<Route path="" element={<HomePage />} />
+							<Route path="contact" element={<Contact />} />
 							<Route path="liked" element={<Liked />} />
 							<Route path="cart" element={<Cart />} />
 						</Route>
