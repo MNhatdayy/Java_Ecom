@@ -1,11 +1,14 @@
 import "./cart.scss";
+// src/pages/cart/Cart.jsx
+import Item from './Item';
 
 const Cart = function () {
-	return (
-		<>
-			<h1>Cart Item</h1>
-		</>
-	);
+  return (
+    <>
+      <Item/>
+      
+    </>
+  );
 };
 
 export default Cart;

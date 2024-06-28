@@ -1,5 +1,6 @@
 package com.HutechB6.Ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +43,9 @@ public class User implements UserDetails {
     @NotBlank(message = "Username is required")
     @Size(min = 1, max = 50, message = "Phone must be between 1 and 50 characters")
     private String phone;
+    @OneToMany(mappedBy = "user")
+
+    private List<CartItem> cartItemList;
 
     @Enumerated(value = EnumType.STRING)
     Role role;

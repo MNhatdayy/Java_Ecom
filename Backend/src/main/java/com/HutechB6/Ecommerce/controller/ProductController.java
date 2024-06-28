@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/apia/products")
 public class ProductController {
     private String uploadDir;
 

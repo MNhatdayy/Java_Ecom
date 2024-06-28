@@ -21,30 +21,29 @@ public class OrderService {
     private IOrderRepository orderRepository;
     @Autowired
     private IOrderDetailRepository orderDetailRepository;
-    @Autowired
-    private CartService cartService;  // Assuming you have a CartService
+     // Assuming you have a CartService
     @Autowired
     private PaymentService paymentService;
-    @Transactional
-    public Order createOrder(String customerName, String customerAddress, User currentUser, String customerPhone, long methodCheckout, List<CartItem> cartItems){
-        Order order = new Order();
-        order.setCustomerName(customerName);
-        order.setCustomerAddress(customerAddress);
-        order.setUser(currentUser);
-        order.setCustomerPhone(customerPhone);
-
-        order.setPayment(paymentService.getPaymentById(methodCheckout).orElseThrow(() -> new IllegalArgumentException("Invalid payment Id:" + methodCheckout)));
-        order = orderRepository.save(order);
-
-        for (CartItem item : cartItems) {
-            OrderDetail detail = new OrderDetail();
-            detail.setOrder(order);
-            detail.setProduct(item.getProduct());
-            detail.setQuantity(item.getQuantity());
-            orderDetailRepository.save(detail);
-        }
-        cartService.clearCart();
-
-        return order;
-    }
+//    @Transactional
+//    public Order createOrder(String customerName, String customerAddress, User currentUser, String customerPhone, long methodCheckout, List<CartItem> cartItems){
+//        Order order = new Order();
+//        order.setCustomerName(customerName);
+//        order.setCustomerAddress(customerAddress);
+//        order.setUser(currentUser);
+//        order.setCustomerPhone(customerPhone);
+//
+//        order.setPayment(paymentService.getPaymentById(methodCheckout).orElseThrow(() -> new IllegalArgumentException("Invalid payment Id:" + methodCheckout)));
+//        order = orderRepository.save(order);
+//
+//        for (CartItem item : cartItems) {
+//            OrderDetail detail = new OrderDetail();
+//            detail.setOrder(order);
+//            detail.setProduct(item.getProduct());
+//            detail.setQuantity(item.getQuantity());
+//            orderDetailRepository.save(detail);
+//        }
+//        cartService.clearCart();
+//
+//        return order;
+//    }
 }

@@ -33,10 +33,10 @@ public class ProductService {
         return productRepository.save(product);
     }
     // Update an existing product
-    public Product updateProduct(@NotNull Product product) {
-        Product existingProduct = productRepository.findById(product.getId())
-                .orElseThrow(() -> new IllegalStateException("Product with ID " +
-                        product.getId() + " does not exist."));
+    public Product updateProduct(@NotNull Product product, @NotNull Product existingProduct) {
+//        Product existingProduct = productRepository.findById(product.getId())
+//                .orElseThrow(() -> new IllegalStateException("Product with ID " +
+//                        product.getId() + " does not exist."));
         existingProduct.setName(product.getName());
         existingProduct.setPrice(product.getPrice());
         if(product.getImageUrl() !=null)

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -40,4 +41,7 @@ public class Product {
     private Set<ProductReview> productReviews;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderDetail> orderDetails;
+    @OneToMany(mappedBy = "product")
+
+    private List<CartItem> cartItemList;
 }

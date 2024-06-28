@@ -1,6 +1,5 @@
 package com.HutechB6.Ecommerce.controller;
 
-
 import com.HutechB6.Ecommerce.model.Category;
 import com.HutechB6.Ecommerce.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
 @CrossOrigin
 @RestController
-@RequestMapping("apia/categories")
-public class CategoryController {
+@RequestMapping("/api/categories")
+public class CategoryApiController {
     @Autowired
     private CategoryService categoryService;
 
