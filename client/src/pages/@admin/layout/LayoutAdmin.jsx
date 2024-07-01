@@ -17,8 +17,12 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import Users from "../pages/management/users/Users";
 import Categories from "../pages/management/categories/Categories";
 import Products from "../pages/management/products/Products";
-import Invoice from "../pages/management/invoices/Invoices";
-
+import CreateCategory from "../pages/management/categories/Create";
+import UpdateCategory from "../pages/management/categories/Update";
+import CreateProduct from "../pages/management/products/Create";
+import UpdateProduct from "../pages/management/products/Update";
+import Orders from "../pages/management/orders/Orders";
+import OrderDetail from "../pages/management/orders/Detail";
 const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
@@ -49,19 +53,19 @@ const LayoutAdmin = () => {
 			key: "3",
 			icon: <UnorderedListOutlined />,
 			label: "Category",
-			href: "/admin/category",
+			href: "/admin/categories",
 		},
 		{
 			key: "4",
 			icon: <ProductOutlined />,
 			label: "Product",
-			href: "/admin/product",
+			href: "/admin/products",
 		},
 		{
 			key: "5",
 			icon: <DollarOutlined />,
-			label: "Invoice",
-			href: "/admin/invoice",
+			label: "Order",
+			href: "/admin/orders",
 		},
 	];
 
@@ -111,9 +115,24 @@ const LayoutAdmin = () => {
 					<Routes>
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="user" element={<Users />} />
-						<Route path="category" element={<Categories />} />
-						<Route path="product" element={<Products />} />
-						<Route path="invoice" element={<Invoice />} />
+
+
+						<Route path="categories">
+							<Route path="" element={<Categories />}/>
+							<Route path="create" element={<CreateCategory />}/>
+							<Route path="update/:id" element={<UpdateCategory />}/>
+						</Route>
+
+
+						<Route path="products">
+							<Route path="" element={<Products />}/>
+							<Route path="create" element={<CreateProduct />}/>
+							<Route path="update/:id" element={<UpdateProduct />}/>		
+						</Route>
+						<Route path="orders">
+							<Route path="" element={<Orders />}/>
+							<Route path="detail/:id" element={< OrderDetail/>}/>
+						</Route>
 					</Routes>
 				</Content>
 			</Layout>

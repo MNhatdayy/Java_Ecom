@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,5 +47,11 @@ public class OrderService {
         cartService.clearCart();
 
         return order;
+    }
+    public Optional<Order> findOrderById(Long id) {
+        return orderRepository.findById(id);
+    }
+    public List<Order> findAllOrders() {
+        return orderRepository.findAll();
     }
 }
