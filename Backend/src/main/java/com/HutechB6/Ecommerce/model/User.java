@@ -20,8 +20,8 @@ import java.util.List;
 @Table(name = "user")
 public class User implements UserDetails {
     @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-            @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     Long id;
     @Column(name = "username", length = 50, unique = true)
     @NotBlank(message = "Username is required")
@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @NotBlank(message = "Username is required")
     @Size(min = 1, max = 50, message = "Phone must be between 1 and 50 characters")
     private String phone;
+    @OneToMany(mappedBy = "user")
+
+    private List<CartItem> cartItemList;
 
     @Enumerated(value = EnumType.STRING)
     Role role;

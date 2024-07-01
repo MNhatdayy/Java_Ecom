@@ -2,7 +2,7 @@ import "./layout.scss";
 
 import { Layout } from "antd";
 const { Header, Footer, Content } = Layout;
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 
 const headerStyle = {
 	color: "#fff",
@@ -36,9 +36,12 @@ import Contact from "../shop/Contact/Contact";
 import ProductDetail from "../shop/ProductDetail/ProductDetail";
 
 const LayoutShop = () => {
+	
 	return (
 		<>
+			
 			<div className="full">
+				
 				<div id="container">
 					<Layout style={layoutStyle}>
 						<Header style={headerStyle}>

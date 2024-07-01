@@ -62,17 +62,32 @@ import Contact from "./pages/shop/Contact/Contact.jsx";
 
 import { login, parseToken } from "./services/AuthController.js";
 import { useEffect, useState } from "react";
+<<<<<<< .mine
 import CreateCategory from "./pages/@admin/pages/management/categories/Create.jsx";
 import UpdateCategory from "./pages/@admin/pages/management/categories/Update.jsx";
 import CreateProduct from "./pages/@admin/pages/management/products/Create.jsx";
 import UpdateProduct from "./pages/@admin/pages/management/products/Update.jsx";
 import Orders from "./pages/@admin/pages/management/orders/Orders.jsx";
 import OrderDetail from "./pages/@admin/pages/management/orders/Detail.jsx";
+=======
+import { loadCartItems, addToCart, deleteFromCart, checkout, removeFromCart } from "./services/CartController.js";
+
+
+
+
+
+>>>>>>> .theirs
+
+
+import { toast } from 'react-toastify';
+
 
 function App() {
 	// const [count, setCount] = useState(0)
 	const [isLoggedIn, setLogin] = useState(false);
 	const [role, setRole] = useState("");
+	
+    
 	useEffect(() => {
 		const tokenInfo = parseToken();
 		if (tokenInfo !== null) {
@@ -81,6 +96,65 @@ function App() {
 			console.log(role);
 		}
 	}, []);
+	const [cartItems, setCartItems] = useState([]);
+	useEffect(() => {
+		const fetchCartItems = async () => {
+			try {
+				const data = await loadCartItems();
+				console.log("Fetched cart items:", data); // Check fetched data
+				setCartItems(data || []); // Ensure cartItems is an array
+			} catch (error) {
+				console.error("Error loading cart items:", error);
+			}
+		};
+	
+		fetchCartItems();
+	}, []); 
+	const handleAddToCart = async (product) => {
+		try {
+			await addToCart(product);
+			toast.success('Sản phẩm đã được thêm vào giỏ hàng');
+			const updatedCartItems = await loadCartItems();
+			setCartItems(updatedCartItems || []);
+		} catch (error) {
+			console.error('Error adding to cart:', error);
+			toast.error('Failed to add product to cart');
+		}
+		};
+
+		const handleDeleteFromCart = async (product) => {
+		try {
+			await deleteFromCart(product);
+			toast.success('Sản phẩm đã được xóa khỏi giỏ hàng');
+			const updatedCartItems = await loadCartItems();
+			setCartItems(updatedCartItems || []);
+		} catch (error) {
+			console.error('Error deleting from cart:', error);
+			toast.error('Failed to delete product from cart');
+		}
+		};
+	
+	const handleCheckOut = async () => {
+		try {
+			await checkout(cartItems);
+			toast.success('Đã thanh toán thành công');
+			setCartItems([]);
+		} catch (error) {
+			console.error('Error checking out:', error);
+			toast.error('Failed to check out');
+		}
+		};
+	
+	const handleRemoveFromCart = async () => {
+		try {
+			await removeFromCart();
+			toast.success('Toàn bộ giỏ hàng đã được xóa');
+			setCartItems([]);
+		} catch (error) {
+			console.error('Error removing from cart:', error);
+			toast.error('Failed to remove cart items');
+		}
+	};
 	return (
 		<ConfigProvider
 			theme={{
@@ -141,15 +215,23 @@ function App() {
 									path="accessories"
 									element={<ShopCategory />}
 								/>
+								<Route path="liked" element={<Liked />} />
+								
 							</Route>
 						</Route>
 						<Route path="" element={<LayoutShop />}>
 							<Route index element={<HomePage />} />
 							<Route path="" element={<HomePage />} />
 							<Route path="contact" element={<Contact />} />
-							<Route path="liked" element={<Liked />} />
-							<Route path="cart" element={<Cart />} />
+							
 						</Route>
+						<Route path="cart" element={<Cart 
+							cartItems = {cartItems}
+							addToCart={handleAddToCart}
+							deleteFromCart={handleDeleteFromCart}
+							checkOut={handleCheckOut}
+							removeFromCart={handleRemoveFromCart}
+							/>} />
 						<Route path="/auth/*">
 							<Route path="login" element={<Login />} />
 							<Route path="register" element={<Register />} />

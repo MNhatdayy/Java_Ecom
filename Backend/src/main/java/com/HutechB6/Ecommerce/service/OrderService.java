@@ -23,7 +23,7 @@ public class OrderService {
     @Autowired
     private IOrderDetailRepository orderDetailRepository;
     @Autowired
-    private CartService cartService;  // Assuming you have a CartService
+    private CartItemService cartItemService;  // Assuming you have a CartService
     @Autowired
     private PaymentService paymentService;
     @Transactional
@@ -44,7 +44,7 @@ public class OrderService {
             detail.setQuantity(item.getQuantity());
             orderDetailRepository.save(detail);
         }
-        cartService.clearCart();
+
 
         return order;
     }

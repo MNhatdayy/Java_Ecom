@@ -11,3 +11,4 @@ public class AuthenticationResponse {
         return token;
     }
 }
+
