@@ -1,26 +1,43 @@
 import { Link } from "react-router-dom";
 import "./login.scss";
 import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
 
 import { login } from "../../../services/AuthController";
 
 const Login = () => {
+	const [messageApi, contextHolder] = message.useMessage();
+	const success = () => {
+		messageApi.open({
+			type: "success",
+			content: "Login success!",
+		});
+	};
+	const error = () => {
+		messageApi.open({
+			type: "error",
+			content: "Login failed!",
+		});
+	};
 	const navigate = useNavigate();
 	const loginFunction = async (values) => {
-		login(values.username, values.password).then((value) => {
-			if (value) {
-				return navigate("/shop");
-			} else {
-				return navigate("/login");
-			}
-		});
+		login(values.username, values.password)
+			.then((value) => {
+				if (value !== null) {
+					success();
+					return navigate("/shop");
+				}
+			})
+			.catch(() => {
+				error();
+				return navigate("/auth/login");
+			});
 	};
 
 	return (
 		<div className="wrapper">
 			<h3>Welcome to my shop</h3>
-
+			{contextHolder}
 			<Form
 				name="basic"
 				labelCol={{

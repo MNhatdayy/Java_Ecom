@@ -50,19 +50,24 @@ import LayoutAdmin from "./pages/@admin/layout/LayoutAdmin.jsx";
 import Dashboard from "./pages/@admin/pages/dashboard/Dashboard.jsx";
 import User from "./pages/@admin/pages/management/users/Users.jsx";
 import Categories from "./pages/@admin/pages/management/categories/Categories.jsx";
-import Invoices from "./pages/@admin/pages/management/invoices/Invoices.jsx";
 import Products from "./pages/@admin/pages/management/products/Products.jsx";
 
 import LayoutShop from "./pages/layout/LayoutShop.jsx";
 import HomePage from "./pages/home/HomePage.jsx";
-import ShopCategory from "./pages/shop/ShopCategory.jsx";
+import ShopCategory from "./pages/shop/ShopByCategory/ShopCategory.jsx";
 
-import ProductDetail from "./pages/shop/ProductDetail/ProductDetail.jsx";
 import Liked from "./pages/liked/Liked.jsx";
 import Cart from "./pages/cart/Cart.jsx";
+import Contact from "./pages/shop/Contact/Contact.jsx";
 
 import { login, parseToken } from "./services/AuthController.js";
 import { useEffect, useState } from "react";
+import CreateCategory from "./pages/@admin/pages/management/categories/Create.jsx";
+import UpdateCategory from "./pages/@admin/pages/management/categories/Update.jsx";
+import CreateProduct from "./pages/@admin/pages/management/products/Create.jsx";
+import UpdateProduct from "./pages/@admin/pages/management/products/Update.jsx";
+import Orders from "./pages/@admin/pages/management/orders/Orders.jsx";
+import OrderDetail from "./pages/@admin/pages/management/orders/Detail.jsx";
 
 function App() {
 	// const [count, setCount] = useState(0)
@@ -73,6 +78,7 @@ function App() {
 		if (tokenInfo !== null) {
 			setLogin(true);
 			setRole(tokenInfo.role);
+			console.log(role);
 		}
 	}, []);
 	return (
@@ -93,17 +99,29 @@ function App() {
 						{role === "ADMIN" && (
 							<Route path="/admin/*" element={<LayoutAdmin />}>
 								<Route index element={<Dashboard />} />
+								<Route path="" element={<Dashboard />} />
+
 								<Route
 									path="dashboard"
 									element={<Dashboard />}
 								/>
 								<Route path="user" element={<User />} />
-								<Route path="product" element={<Products />} />
-								<Route
-									path="category"
-									element={<Categories />}
-								/>
-								<Route path="invoice" element={<Invoices />} />
+								<Route path="products">
+									<Route path="" element={<Products />}/>
+									<Route path="create" element={<CreateProduct />}/>
+									<Route path="update/:id" element={<UpdateProduct />}/>
+								</Route>
+
+								<Route path="categories">
+									<Route path="" element={<Categories />}/>
+									<Route path="create" element={<CreateCategory />}/>
+									<Route path="update/:id" element={<UpdateCategory />}/>
+								</Route>
+									
+								<Route path="orders">
+									<Route path="" element={<Orders/>}/>
+									<Route path="detail/:id" element={< OrderDetail/>}/>		
+								</Route>
 							</Route>
 						)}
 						<Route path="/shop/*" element={<LayoutShop />}>
@@ -120,7 +138,7 @@ function App() {
 									element={<ShopCategory />}
 								/>
 								<Route
-									path="asscessories"
+									path="accessories"
 									element={<ShopCategory />}
 								/>
 							</Route>
@@ -128,6 +146,7 @@ function App() {
 						<Route path="" element={<LayoutShop />}>
 							<Route index element={<HomePage />} />
 							<Route path="" element={<HomePage />} />
+							<Route path="contact" element={<Contact />} />
 							<Route path="liked" element={<Liked />} />
 							<Route path="cart" element={<Cart />} />
 						</Route>

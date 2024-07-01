@@ -3,7 +3,7 @@ import "./navbar.scss";
 import { useState, useEffect } from "react";
 import { Button, Input } from "antd";
 
-import { Menu } from "antd";
+import { Menu, Badge } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 import { logout, parseToken } from "../../../services/AuthController";
@@ -29,11 +29,15 @@ const menu = [
 				label: <Link to="/shop/product/keycap">Keycap</Link>,
 				key: "keycap",
 			},
+			{
+				label: <Link to="/shop/product/switch">Switch</Link>,
+				key: "switch",
+			},
+			{
+				label: <Link to="/shop/product/accessories">Accessories</Link>,
+				key: "accessories",
+			},
 		],
-	},
-	{
-		key: "groupbuy",
-		label: <Link to="/shop/group-buy">Group Buy</Link>,
 	},
 	{
 		key: "contact",
@@ -117,14 +121,18 @@ const NavbarComponent = () => {
 						)}
 					</div>
 					<div className="navbar--liked">
-						<Link to={"/liked"}>
-							<i className="fa fa-heart"></i>
-						</Link>
+						<Badge size="small" count={5}>
+							<Link to={"/liked"}>
+								<i className="fa fa-heart"></i>
+							</Link>
+						</Badge>
 					</div>
 					<div className="navbar--cart">
-						<Link to={"/cart"}>
-							<i className="fa fa-cart-shopping"></i>
-						</Link>
+						<Badge size="small" count={5}>
+							<Link to={"/cart"}>
+								<i className="fa fa-cart-shopping"></i>
+							</Link>
+						</Badge>
 					</div>
 				</div>
 			</div>
