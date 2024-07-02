@@ -7,6 +7,7 @@ import { useState } from "react";
 const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
+import { Link } from "react-router-dom";
 const siderStyle = {
 	backgroundColor: "white",
 };
@@ -37,70 +38,15 @@ const HomePage = () => {
 		const fetchCartItems = async () => {
 			try {
 				const data = await loadProducts();
-				console.log("Fetched product items:", data); // Check fetched data
 				setProducts(data || []); // Ensure cartItems is an array
 			} catch (error) {
 				console.error("Error loading cart items:", error);
 			}
 		};
-	
+
 		fetchCartItems();
-	}, []); 
-	const dataProduct = [
-		{
-			id: 1,
-			name: "Kit Neo65",
-			price: 3500000,
-			priceSale: 300000,
+	}, []);
 
-			description: "Layout 65% from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 3000000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 2500000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 1900000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 3200000,
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 1900000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-	];
 	return (
 		<div>
 			<Layout>
@@ -186,7 +132,7 @@ const HomePage = () => {
 							</div>
 						</div>
 
-						<div className="sale--wrapper">
+						{/* <div className="sale--wrapper">
 							<div className="title flip-animation">
 								<span>S</span>
 								<span>A</span>
@@ -210,7 +156,7 @@ const HomePage = () => {
 									View more details
 								</Button>
 							</div>
-						</div>
+						</div> */}
 
 						<div className="gb--wrapper">
 							<div className="title flip-animation">
@@ -234,9 +180,11 @@ const HomePage = () => {
 								})}
 							</div>
 							<div className="actions">
-								<Button shape="round" type="primary">
-									View more details
-								</Button>
+								<Link to={"/shop/product/all"}>
+									<Button shape="round" type="primary">
+										View more details
+									</Button>
+								</Link>
 							</div>
 						</div>
 					</div>

@@ -8,27 +8,23 @@ import { useNavigate } from "react-router-dom";
 const ProductComponent = ({ product }) => {
 	const navigate = useNavigate();
 	const handleAddToCart = (cartId, quantity) => {
-		
 		addToCart(cartId, quantity)
-            .then(response => {
-                console.log("Cart updated:", response);
-				navigate("/cart");
-				
-                
-				
-            })
-            .catch(error => {
-                console.error("Error updating cart:", error);
-                // Xử lý lỗi nếu có
-            });
-	}
+			.then((response) => {
+				console.log("Cart updated:", response);
+				navigate("/shop/cart");
+			})
+			.catch((error) => {
+				console.error("Error updating cart:", error);
+				// Xử lý lỗi nếu có
+			});
+	};
 	return (
 		<>
 			<div className="product--card">
 				<div className="product--img">
 					<img
 						loading="lazy"
-						src={`http://localhost:8099/images/${product.imageUrl}`}
+						src={`http://localhost:8099${product.imageUrl}`}
 						alt=""
 					/>
 					<div className="info">
@@ -38,15 +34,13 @@ const ProductComponent = ({ product }) => {
 									<SearchOutlined />
 								</Link>
 							</Button>
-							<Button size="large"
+							<Button
+								size="large"
 								type="primary"
 								shape="circle"
-								onClick={() => handleAddToCart(product.id, 1)}
-								>
+								onClick={() => handleAddToCart(product.id, 1)}>
 								<ShoppingCartOutlined />
-								
 							</Button>
-							
 						</div>
 					</div>
 				</div>
@@ -56,7 +50,12 @@ const ProductComponent = ({ product }) => {
 					<p className="product--price">
 						{/* <span className="price-sale">{product.priceSale}</span> */}
 
-						<span className="price-sale">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</span>
+						<span className="price-sale">
+							{new Intl.NumberFormat("vi-VN", {
+								style: "currency",
+								currency: "VND",
+							}).format(product.price)}
+						</span>
 					</p>
 				</div>
 			</div>

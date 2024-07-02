@@ -8,6 +8,8 @@ import com.HutechB6.Ecommerce.service.CategoryService;
 import com.HutechB6.Ecommerce.service.ProductImagesService;
 import com.HutechB6.Ecommerce.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +39,20 @@ public class ProductController {
     private CategoryService categoryService;
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts(@Nullable @PathParam("category") String category) {
         List<Product> products = productService.getAllProducts();
-        return products;
+
+        if (category == null || category.isEmpty()) {
+            return products;
+        }
+
+        List<Product> list = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getCategory().getName().toLowerCase().equals(category)) {
+                list.add(product);
+            }
+        }
+        return list;
     }
     @PostMapping
     public ResponseEntity<Product> createProduct(

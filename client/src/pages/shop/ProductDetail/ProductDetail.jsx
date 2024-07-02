@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import "./productdetail.scss";
 import { Breadcrumb, Button, InputNumber } from "antd";
-import { Tabs } from "antd";
 import Slider from "react-slick";
 import { useEffect, useState } from "react";
 import { loadProductById } from "../../../services/HomeController";
@@ -15,124 +14,72 @@ var settings = {
 	slidesToScroll: 1,
 };
 
-const items = [
-	{
-		key: "1",
-		label: "Infomation",
-		children: ` Chất liệu: ABS Double-Shot`,
-	},
-	{
-		key: "2",
-		label: "Payment guide",
-		children: (
-			<div className="payment-guide">
-				<h4>Hướng dẫn mua hàng:</h4>
-				<ul>
-					<li>
-						Truy cập vào link bán hàng trên web MOKB và chọn sản
-						phẩm cần mua
-					</li>
-					<li>Điều chỉnh số lượng sản phẩm muốn mua theo ý muốn</li>
-					<li>Chọn "thêm vào giỏ hàng" hoặc "Mua ngay"</li>
-				</ul>
-			</div>
-		),
-	},
-];
-
-
-
-const onChangeTabs = (key) => {
-	console.log(key);
-};
-
 const ProductDetail = () => {
 	const { id } = useParams();
 	const [productDetail, setProductDetail] = useState("");
 	const [quantity, setQuantity] = useState(1);
+	const [itemBread, setItem] = useState([]);
 	const onChange = (value) => {
-		setQuantity(value)
+		setQuantity(value);
 	};
 	const handleAddToCart = (cartId, quantity) => {
 		addToCart(cartId, quantity)
-            .then(response => {
-                console.log("Cart updated:", response);
-                
-				
-                
-				
-            })
-            .catch(error => {
-                console.error("Error updating cart:", error);
-                // Xử lý lỗi nếu có
-            });
-	}
+			.then((response) => {
+				console.log("Cart updated:", response);
+			})
+			.catch((error) => {
+				console.error("Error updating cart:", error);
+				// Xử lý lỗi nếu có
+			});
+	};
 	useEffect(() => {
 		const fetchCartItems = async () => {
 			try {
 				const data = await loadProductById(id);
-				console.log("Fetched cart items:", data); // Check fetched data
-				setProductDetail(data || []); // Ensure cartItems is an array
-				
+				setProductDetail(data || []);
+				setItem([
+					{
+						title: "Home",
+					},
+					{
+						title:
+							productDetail.category?.name || "Unknown Category",
+						href: `/shop/product/${
+							productDetail.category?.name || "unknown"
+						}`,
+					},
+				]);
 			} catch (error) {
 				console.error("Error loading cart items:", error);
 			}
 		};
-		
 		fetchCartItems();
-	}, [id]); 
-	
-	// const productDetail = {
-	// 	id: id,
-	// 	name: "Bridge75 - Bàn phím cơ nhôm gaming 3 mode",
-	// 	price: "1.740.000₫",
-	// 	vendor: "Shortcut Studio",
-	// 	thumbnail:
-	// 		"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-black-no-rgb-1714960892028.jpg?v=1714967409093",
-	// 	listImg: [
-	// 		"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-black-no-rgb-1714960892028.jpg?v=1714967409093",
-	// 		"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-white-plus-ver-1714960927140.jpg?v=1714967409093",
-	// 		"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-cream-plus-1714960939334.jpg?v=1714967409093",
-	// 		"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-pink-plus-ver-1714960950334.jpg?v=1714967409093",
-	// 	],
-	// 	category: {
-	// 		id: 1,
-	// 		name: "Kit",
-	// 	},
-	// };
+	}, [id, itemBread]);
 
 	return (
 		<>
 			<div className="product--detail--wrapper">
 				<div className="breadcrumb">
-					<Breadcrumb
-						separator=">"
-						items={[
-							{
-								title: "Home",
-							},
-							{
-								title: "Kit",
-								href: "/shop/product/kit",
-							},
-						]}
-					/>
+					<Breadcrumb separator=">" items={itemBread} />
 				</div>
 				<div className="product--detail--container">
 					<div className="product--detail">
 						<div className="product--slide">
 							<Slider {...settings}>
-								
-								
-								
-								
+								{/* {productDetail.Images.map((ele) => {
+									<div className="product--slide--img">
+										<img
+											width="100%"
+											src={`http://localhost:8099${ele}`}
+											alt="img"
+										/>
+									</div>;
+								})} */}
 							</Slider>
-							<div
-									
-								className="product--slide--img">
+							<div className="product--slide--img">
 								<img
 									width="100%"
-									src={`http://localhost:8099/images/${productDetail.imageUrl}`}
+									src={`http://localhost:8099${productDetail.imageUrl}`}
 									alt="img"
 								/>
 							</div>
@@ -146,11 +93,14 @@ const ProductDetail = () => {
 								{productDetail.description}
 							</p>
 							<p className="product--price">
-								{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(productDetail.price)}
+								{new Intl.NumberFormat("vi-VN", {
+									style: "currency",
+									currency: "VND",
+								}).format(productDetail.price)}
 							</p>
-							<p className="product--version">
+							{/* <p className="product--version">
 								Version: Bridge75
-							</p>
+							</p> */}
 
 							<div className="product--actions">
 								<InputNumber
@@ -159,8 +109,16 @@ const ProductDetail = () => {
 									defaultValue={1}
 									onChange={onChange}
 								/>
-								<Button block className="btn-add-cart" href="/cart" onClick={() => handleAddToCart(productDetail.id, quantity)}>
-									
+								<Button
+									block
+									className="btn-add-cart"
+									href="/cart"
+									onClick={() =>
+										handleAddToCart(
+											productDetail.id,
+											quantity
+										)
+									}>
 									Add to cart
 								</Button>
 							</div>
@@ -174,14 +132,6 @@ const ProductDetail = () => {
 								</Button>
 							</div>
 						</div>
-					</div>
-					<div className="product--detail--description">
-						<Tabs
-							defaultActiveKey="1"
-							centered
-							items={items}
-							onChange={onChangeTabs}
-						/>
 					</div>
 				</div>
 			</div>

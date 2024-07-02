@@ -71,15 +71,13 @@ import Orders from "./pages/@admin/pages/management/orders/Orders.jsx";
 import OrderDetail from "./pages/@admin/pages/management/orders/Detail.jsx";
 
 import { loadCartItems } from "./services/CartController.js";
-import { toast } from 'react-toastify';
-
+import { toast } from "react-toastify";
 
 function App() {
 	// const [count, setCount] = useState(0)
 	const [isLoggedIn, setLogin] = useState(false);
 	const [role, setRole] = useState("");
-	
-    
+
 	useEffect(() => {
 		const tokenInfo = parseToken();
 		if (tokenInfo !== null) {
@@ -88,8 +86,7 @@ function App() {
 			console.log(role);
 		}
 	}, []);
-	
-	
+
 	return (
 		<ConfigProvider
 			theme={{
@@ -116,20 +113,35 @@ function App() {
 								/>
 								<Route path="user" element={<User />} />
 								<Route path="products">
-									<Route path="" element={<Products />}/>
-									<Route path="create" element={<CreateProduct />}/>
-									<Route path="update/:id" element={<UpdateProduct />}/>
+									<Route path="" element={<Products />} />
+									<Route
+										path="create"
+										element={<CreateProduct />}
+									/>
+									<Route
+										path="update/:id"
+										element={<UpdateProduct />}
+									/>
 								</Route>
 
 								<Route path="categories">
-									<Route path="" element={<Categories />}/>
-									<Route path="create" element={<CreateCategory />}/>
-									<Route path="update/:id" element={<UpdateCategory />}/>
+									<Route path="" element={<Categories />} />
+									<Route
+										path="create"
+										element={<CreateCategory />}
+									/>
+									<Route
+										path="update/:id"
+										element={<UpdateCategory />}
+									/>
 								</Route>
-									
+
 								<Route path="orders">
-									<Route path="" element={<Orders/>}/>
-									<Route path="detail/:id" element={< OrderDetail/>}/>		
+									<Route path="" element={<Orders />} />
+									<Route
+										path="detail/:id"
+										element={<OrderDetail />}
+									/>
 								</Route>
 							</Route>
 						)}
@@ -147,23 +159,24 @@ function App() {
 									element={<ShopCategory />}
 								/>
 								<Route
+									path="keycap"
+									element={<ShopCategory />}
+								/>
+								<Route
 									path="accessories"
 									element={<ShopCategory />}
 								/>
-								<Route path="liked" element={<Liked />} />
-								
+								<Route path="all" element={<ShopCategory />} />
 							</Route>
+							<Route path="cart" element={<Cart />} />
+							<Route path="liked" element={<Liked />} />
 						</Route>
 						<Route path="" element={<LayoutShop />}>
 							<Route index element={<HomePage />} />
 							<Route path="" element={<HomePage />} />
 							<Route path="contact" element={<Contact />} />
-							
 						</Route>
-						<Route path="cart" element={<Cart 
-							
-							
-							/>} />
+
 						<Route path="/auth/*">
 							<Route path="login" element={<Login />} />
 							<Route path="register" element={<Register />} />
