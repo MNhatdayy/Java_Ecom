@@ -40,13 +40,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<OrderDetail> orderDetails;
-<<<<<<< .mine
 
-
-
-=======
     @OneToMany(mappedBy = "product")
 
     private List<CartItem> cartItemList;
->>>>>>> .theirs
+
 }

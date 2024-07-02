@@ -1,7 +1,9 @@
 import "./home.scss";
 import { Button, Layout } from "antd";
 import Slider from "react-slick";
-
+import { useEffect } from "react";
+import { loadProducts } from "../../services/HomeController";
+import { useState } from "react";
 const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
@@ -30,6 +32,20 @@ var settings = {
 };
 
 const HomePage = () => {
+	const [products, setProducts] = useState([]);
+	useEffect(() => {
+		const fetchCartItems = async () => {
+			try {
+				const data = await loadProducts();
+				console.log("Fetched product items:", data); // Check fetched data
+				setProducts(data || []); // Ensure cartItems is an array
+			} catch (error) {
+				console.error("Error loading cart items:", error);
+			}
+		};
+	
+		fetchCartItems();
+	}, []); 
 	const dataProduct = [
 		{
 			id: 1,
@@ -180,7 +196,7 @@ const HomePage = () => {
 							</div>
 
 							<div className="list-product">
-								{dataProduct.map((value, index) => {
+								{products.map((value, index) => {
 									return (
 										<ProductComponent
 											key={index}
@@ -208,7 +224,7 @@ const HomePage = () => {
 							</div>
 
 							<div className="list-product">
-								{dataProduct.map((value, index) => {
+								{products.map((value, index) => {
 									return (
 										<ProductComponent
 											key={index}

@@ -1,10 +1,14 @@
 package com.HutechB6.Ecommerce.controller;
 
+import com.HutechB6.Ecommerce.DTO.CartRequest;
+import com.HutechB6.Ecommerce.DTO.CartUpdateRequest;
 import com.HutechB6.Ecommerce.model.CartItem;
 import com.HutechB6.Ecommerce.service.CartItemService;
 import com.HutechB6.Ecommerce.service.ProductImagesService;
 import com.HutechB6.Ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,70 +27,31 @@ public class CartController {
     public List<CartItem> getAllCartItems(){
         return cartItemService.getCartItemsFull();
     }
-//    @GetMapping
-//    public String showCart(Model model) {
-//        List<CartItem> cartItemList = cartService.getCartItems();
-//        double total = 0;
-//        for(CartItem item : cartItemList){
-//            total = total + item.getProduct().getPrice()*item.getQuantity();
-//        }
-//        model.addAttribute("cartItems", cartService.getCartItems());
-//        model.addAttribute("totalPrice", total);
-//        return "/cart/cart";
-//    }
-//
-////    @PostMapping("/add")
-////    public String addToCart(@RequestParam Long productId, @RequestParam int quantity, RedirectAttributes redirectAttributes){
-////        int realQuantity = productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:")).getQuantity();
-////        List<CartItem> cartItems = cartService.getCartItems();
-////        CartItem item = new CartItem(productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:")), quantity);
-////
-////        int temp = 0;
-////        if (!cartItems.contains(item)){
-////            if(realQuantity < quantity){
-////
-////                redirectAttributes.addAttribute("error", "Số lượng không đủ");
-////                return "redirect:/products/" + productId;
-////            }
-////
-////        }
-////
-////        else{
-////            for(CartItem i : cartItems){
-////                if(i.getProduct().getId().equals(productId))
-////
-////                    if(realQuantity < (i.getQuantity()+quantity)){
-////
-////                        redirectAttributes.addAttribute("error", "Số lượng không đủ");
-////                        return "redirect:/products/" + productId;
-////                    }
-////            }
-////        }
-////
-////        cartService.addToCart(productId, quantity);
-////        return "redirect:/cart";
-////    }
-//    @GetMapping("/remove/{productId}")
-//    public String removeFromCart(@PathVariable Long productId) {
-//        cartService.removeFromCart(productId);
-//        return "redirect:/cart";
-//    }
-//    @GetMapping("/clear")
-//    public String clearCart() {
-//        cartService.clearCart();
-//        return "redirect:/cart";
-//    }
-//    @PostMapping("/update-cart")
-//    @ResponseBody
-//    public Map<String, Object> updateCart(@RequestBody CartItem request) {
-//        Map<String, Object> response = new HashMap<>();
-//        try {
-//            cartService.updateCart(request.getProduct().getId(), request.getQuantity());
-//            response.put("success", true);
-//        } catch (Exception e) {
-//            response.put("success", false);
-//            response.put("message", e.getMessage());
-//        }
-//        return response;
-//    }
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<CartItem>> getCartsByUsername(@PathVariable String username) {
+        List<CartItem> carts = cartItemService.getCartsByUsername(username);
+        return new ResponseEntity<>(carts, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<CartItem> addCart(@RequestBody CartRequest cartRequest) {
+        CartItem createdCart = cartItemService.addCart(cartRequest.getUsername(), cartRequest.getProductId(), cartRequest.getQuantity());
+        return new ResponseEntity<>(createdCart, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CartItem> updateCart(@PathVariable Long id, @RequestBody CartUpdateRequest cartRequest) {
+        try {
+            CartItem updatedCart = cartItemService.updateCart(id, cartRequest.getUsername(), cartRequest.getQuantity());
+            return new ResponseEntity<>(updatedCart, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCart(@PathVariable Long id) {
+        cartItemService.deleteCart(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

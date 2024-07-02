@@ -2,7 +2,7 @@ import "./layout.scss";
 
 import { Layout } from "antd";
 const { Header, Footer, Content } = Layout;
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 const headerStyle = {
 	color: "#fff",
