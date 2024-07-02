@@ -33,7 +33,7 @@ const LayoutAdmin = () => {
 
 	const containerStyle = {
 		width: "100%",
-		height: "100vh",
+		minHeight: "100vh",
 	};
 
 	const menu = [
@@ -116,22 +116,29 @@ const LayoutAdmin = () => {
 						<Route path="dashboard" element={<Dashboard />} />
 						<Route path="user" element={<Users />} />
 
-
 						<Route path="categories">
-							<Route path="" element={<Categories />}/>
-							<Route path="create" element={<CreateCategory />}/>
-							<Route path="update/:id" element={<UpdateCategory />}/>
+							<Route path="" element={<Categories />} />
+							<Route path="create" element={<CreateCategory />} />
+							<Route
+								path="update/:id"
+								element={<UpdateCategory />}
+							/>
 						</Route>
-
 
 						<Route path="products">
-							<Route path="" element={<Products />}/>
-							<Route path="create" element={<CreateProduct />}/>
-							<Route path="update/:id" element={<UpdateProduct />}/>		
+							<Route path="" element={<Products />} />
+							<Route path="create" element={<CreateProduct />} />
+							<Route
+								path="update/:id"
+								element={<UpdateProduct />}
+							/>
 						</Route>
 						<Route path="orders">
-							<Route path="" element={<Orders />}/>
-							<Route path="detail/:id" element={< OrderDetail/>}/>
+							<Route path="" element={<Orders />} />
+							<Route
+								path="detail/:id"
+								element={<OrderDetail />}
+							/>
 						</Route>
 					</Routes>
 				</Content>
