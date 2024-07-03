@@ -1,5 +1,5 @@
 import "./home.scss";
-import { Button, Empty, Layout } from "antd";
+import { Button, Empty, Layout,Modal } from "antd";
 import Slider from "react-slick";
 import { useEffect } from "react";
 import { loadProducts } from "../../services/HomeController";
@@ -33,13 +33,30 @@ var settings = {
 };
 
 const HomePage = () => {
+	const [paymentSuccess, setPaymentSuccess] = useState(false);
 	const [products, setProducts] = useState([]);
 	useEffect(() => {
+		checkPaymentSuccess()
 		loadProducts()
 			.then((response) => response)
 			.then((data) => setProducts(data));
 	}, []);
 	console.log(products);
+	const checkPaymentSuccess = async () => {
+        const params = new URLSearchParams(window.location.search); // Get query parameters
+      	const vnp_ResponseCode = params.get("vnp_ResponseCode");
+
+      	if (vnp_ResponseCode === "00") {
+        // If VNPay response code indicates success
+        setPaymentSuccess(true); // Set payment success state to true
+        // Optional: Redirect to home or a success page after handling payment
+        // history.push("/success"); // Example redirect to /success route
+      }
+    };
+	const handleModalCancel = () => {
+        setPaymentSuccess(false); // Close the modal
+        window.location.href = "http://localhost:5173/"; // Redirect to home page
+    };
 	return (
 		<div>
 			<Layout>
@@ -183,6 +200,15 @@ const HomePage = () => {
 					</div>
 				</Content>
 			</Layout>
+			<Modal
+            title="Thanh toán thành công"
+            visible={paymentSuccess}
+            onCancel={handleModalCancel} 
+			onOk={handleModalCancel}
+        	>
+            <p>Đơn hàng của bạn đã được tiếp nhận.</p>
+            {/* Add additional content or actions here */}
+        </Modal>
 		</div>
 	);
 };

@@ -69,7 +69,9 @@ import CreateProduct from "./pages/@admin/pages/management/products/Create.jsx";
 import UpdateProduct from "./pages/@admin/pages/management/products/Update.jsx";
 import Orders from "./pages/@admin/pages/management/orders/Orders.jsx";
 import OrderDetail from "./pages/@admin/pages/management/orders/Detail.jsx";
-
+import Order from "./pages/order/Order";
+import PaymentConfirmation  from "./pages/order/PaymentConfirmation"
+import PaymentPage from "./pages/order/payment/PaymentPage";
 import { loadCartItems } from "./services/CartController.js";
 import { toast } from "react-toastify";
 
@@ -176,6 +178,9 @@ function App() {
 							<Route path="" element={<HomePage />} />
 							<Route path="contact" element={<Contact />} />
 						</Route>
+						<Route path="order" element={<Order/>} />
+						<Route path="payment" element={<PaymentPage/>}/>
+						<Route path="paymentconfirmation" element={<PaymentConfirmation/>} /> 
 
 						<Route path="/auth/*">
 							<Route path="login" element={<Login />} />
