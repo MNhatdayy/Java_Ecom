@@ -1,7 +1,5 @@
 package com.HutechB6.Ecommerce.controller;
 
-
-import com.HutechB6.Ecommerce.model.Category;
 import com.HutechB6.Ecommerce.model.Payment;
 import com.HutechB6.Ecommerce.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -43,7 +43,8 @@ public class ContactController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Contact> updateContact(@PathVariable Long id,
-                                        @RequestBody Contact contactDetails){
+                                                 @RequestBody Contact contactDetails){
+                                       ){
         Contact contact = contactService.getContactById(id).orElseThrow(() -> new RuntimeException("Contact not found on :: "
                 + id));
         contact.setName(contact.getName());

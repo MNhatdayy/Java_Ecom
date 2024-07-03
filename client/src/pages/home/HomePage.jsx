@@ -1,5 +1,5 @@
 import "./home.scss";
-import { Button,Empty, Layout,Modal,Result } from "antd";
+import { Button, Empty, Layout,Modal } from "antd";
 import Slider from "react-slick";
 import { useEffect } from "react";
 import { loadProducts } from "../../services/HomeController";
@@ -7,7 +7,6 @@ import { useState } from "react";
 const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
-import { getPaymentSuccessMessage } from '../../services/OrderController';
 import { Link } from "react-router-dom";
 const siderStyle = {
 	backgroundColor: "white",
@@ -37,18 +36,12 @@ const HomePage = () => {
 	const [paymentSuccess, setPaymentSuccess] = useState(false);
 	const [products, setProducts] = useState([]);
 	useEffect(() => {
-		const fetchCartItems = async () => {
-			try {
-				const data = await loadProducts();
-				console.log("Fetched product items:", data); // Check fetched data
-				setProducts(data || []); // Ensure cartItems is an array
-			} catch (error) {
-				console.error("Error loading cart items:", error);
-			}
-		};
-		checkPaymentSuccess();
-		fetchCartItems();
-	}, []); 
+		checkPaymentSuccess()
+		loadProducts()
+			.then((response) => response)
+			.then((data) => setProducts(data));
+	}, []);
+	console.log(products);
 	const checkPaymentSuccess = async () => {
         const params = new URLSearchParams(window.location.search); // Get query parameters
       	const vnp_ResponseCode = params.get("vnp_ResponseCode");
@@ -64,66 +57,6 @@ const HomePage = () => {
         setPaymentSuccess(false); // Close the modal
         window.location.href = "http://localhost:5173/"; // Redirect to home page
     };
-	const dataProduct = [
-		{
-			id: 1,
-			name: "Kit Neo65",
-			price: 3500000,
-			priceSale: 300000,
-
-			description: "Layout 65% from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 3000000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 2500000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 1900000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 3200000,
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 1900000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-	];
-		loadProducts()
-			.then((response) => response)
-			.then((data) => setProducts(data));
-	}, []);
-	console.log(products);
 	return (
 		<div>
 			<Layout>
@@ -277,7 +210,6 @@ const HomePage = () => {
             {/* Add additional content or actions here */}
         </Modal>
 		</div>
-		
 	);
 };
 

@@ -53,37 +53,16 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<Order> createOrder(@RequestBody OrderCreateRequest orderRequest) {
         try {
-            // Log the incoming request
-            System.out.println("Received order creation request: " + orderRequest);
-
-            // Authenticate user from token
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String username = userDetails.getUsername();
-
-            // Log the username
-            System.out.println("Authenticated username: " + username);
-
-            // Find user by username (assuming the username is unique and represents the user's ID or unique identifier)
-            User user = userDetailsServiceImp.findUserByUsername(username)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-
-            // Verify userId from request matches userId from token
-            if (!user.getId().equals(orderRequest.getUserId())) {
-                throw new IllegalStateException("User ID mismatch");
-            }
-
-            // Create Order object from request
+            // Tìm người dùng bằng userId từ yêu cầu
+            User user = userDetailsServiceImp.findUserById(orderRequest.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + orderRequest.getUserId()));
+            Payment payment = paymentService.getPaymentById(orderRequest.getPaymentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy phương thức thanh toán với ID: " + orderRequest.getPaymentId()));
+            // Tiếp tục xử lý và tạo đơn hàng
             Order order = new Order();
             order.setCustomerName(orderRequest.getCustomerName());
             order.setCustomerAddress(orderRequest.getCustomerAddress());
             order.setCustomerPhone(orderRequest.getCustomerPhone());
-
-            // Log before finding user
-            System.out.println("Finding user with ID: " + orderRequest.getUserId());
-
-            // Log before finding payment
-            System.out.println("Finding payment with ID: " + orderRequest.getPaymentId());
 
             // Find payment method and verify existence
             Payment payment = paymentService.getPaymentById(orderRequest.getPaymentId())
@@ -101,11 +80,8 @@ public class OrderController {
 
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
         } catch (EntityNotFoundException e) {
-            System.err.println("Entity not found: " + e.getMessage());
+            System.err.println("Không tìm thấy thực thể: " + e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } catch (IllegalStateException e) {
-            System.err.println("Illegal state: " + e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
