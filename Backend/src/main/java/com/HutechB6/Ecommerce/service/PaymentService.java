@@ -27,7 +27,7 @@ public class PaymentService {
         return paymentRepository.findById(id);
     }
     public PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request, Long total) {
-        Long amount =  total;
+        Long amount =  total * 100;
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));

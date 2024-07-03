@@ -64,10 +64,6 @@ public class OrderController {
             order.setCustomerAddress(orderRequest.getCustomerAddress());
             order.setCustomerPhone(orderRequest.getCustomerPhone());
 
-            // Find payment method and verify existence
-            Payment payment = paymentService.getPaymentById(orderRequest.getPaymentId())
-                    .orElseThrow(() -> new EntityNotFoundException("Payment not found with id: " + orderRequest.getPaymentId()));
-
             // Set user and payment method for order
             order.setUser(user);
             order.setPayment(payment);
