@@ -152,3 +152,4 @@ export const removeFromCart = async (cartItems, setCartItems) => {
 		toast.error("Failed to remove items from cart");
 	}
 };
+

@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getAuthToken, request, setAuthToken } from "../util/ApiFunction";
+import { jwtDecode } from "jwt-decode";
 export const fetchOrders = async (setOrders,notification) =>{
     try {
       
@@ -35,3 +37,54 @@ export const fetchOrderDetails = async (id,getProductById,setOrderDetails,setLoa
         setLoading(false);
     }
 }
+export const submitOrder = async (customerName, customerAddress, customerPhone, payment) => {
+    try {
+        const response = await axios.post(`http://localhost:8099/api/orders/submit`, {
+            customerName: customerName,
+            customerAddress: customerAddress,
+            customerPhone: customerPhone,
+            payment: payment,
+        });
+        return response.data; // Trả về dữ liệu từ backend (URL thanh toán hoặc thông báo lỗi)
+    } catch (error) {
+        console.error('Error submitting order:', error);
+        throw error; // Xử lý lỗi
+    }
+};
+export const createOrder = async (orderData) => {
+  try {
+      const token = localStorage.getItem('token');
+      console.log('JWT Token:', token); // Debugging statement to check the token
+
+      if (!token) {
+          throw new Error('JWT token is missing');
+      }
+
+      const decodedToken = jwtDecode(token);
+ // Debugging statement
+
+      const response = await axios.post(
+          'http://localhost:8099/api/orders/create',
+          orderData,
+          {
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+              },
+          }
+      );
+      return response.data;
+  } catch (error) {
+      console.error('Error creating order:', error);
+      throw error;
+  }
+};
+export const getPaymentSuccessMessage = async () => {
+  try {
+      const response = await axios.get(`http://localhost:8099/api/orders/confirmation`);
+      return response.data; // Trả về dữ liệu từ phản hồi
+  } catch (error) {
+      console.error('Error fetching payment success message:', error);
+      throw error; // Xử lý lỗi
+  }
+};

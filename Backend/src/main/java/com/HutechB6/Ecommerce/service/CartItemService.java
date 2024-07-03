@@ -85,4 +85,7 @@ public class CartItemService {
         cartItemRepository.deleteById(id);
     }
 
+    public void clearCart() {
+        cartItemRepository.clear();
+    }
 }

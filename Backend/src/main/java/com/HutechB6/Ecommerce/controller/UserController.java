@@ -1,5 +1,6 @@
 package com.HutechB6.Ecommerce.controller;
 
+import com.HutechB6.Ecommerce.model.Product;
 import com.HutechB6.Ecommerce.model.Role;
 import com.HutechB6.Ecommerce.model.User;
 import com.HutechB6.Ecommerce.service.UserDetailsServiceImp;
@@ -37,4 +38,5 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
+
 }

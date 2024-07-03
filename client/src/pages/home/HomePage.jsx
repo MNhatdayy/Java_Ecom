@@ -1,5 +1,5 @@
 import "./home.scss";
-import { Button, Empty, Layout } from "antd";
+import { Button,Empty, Layout,Modal,Result } from "antd";
 import Slider from "react-slick";
 import { useEffect } from "react";
 import { loadProducts } from "../../services/HomeController";
@@ -7,6 +7,7 @@ import { useState } from "react";
 const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
+import { getPaymentSuccessMessage } from '../../services/OrderController';
 import { Link } from "react-router-dom";
 const siderStyle = {
 	backgroundColor: "white",
@@ -33,8 +34,91 @@ var settings = {
 };
 
 const HomePage = () => {
+	const [paymentSuccess, setPaymentSuccess] = useState(false);
 	const [products, setProducts] = useState([]);
 	useEffect(() => {
+		const fetchCartItems = async () => {
+			try {
+				const data = await loadProducts();
+				console.log("Fetched product items:", data); // Check fetched data
+				setProducts(data || []); // Ensure cartItems is an array
+			} catch (error) {
+				console.error("Error loading cart items:", error);
+			}
+		};
+		checkPaymentSuccess();
+		fetchCartItems();
+	}, []); 
+	const checkPaymentSuccess = async () => {
+        const params = new URLSearchParams(window.location.search); // Get query parameters
+      	const vnp_ResponseCode = params.get("vnp_ResponseCode");
+
+      	if (vnp_ResponseCode === "00") {
+        // If VNPay response code indicates success
+        setPaymentSuccess(true); // Set payment success state to true
+        // Optional: Redirect to home or a success page after handling payment
+        // history.push("/success"); // Example redirect to /success route
+      }
+    };
+	const handleModalCancel = () => {
+        setPaymentSuccess(false); // Close the modal
+        window.location.href = "http://localhost:5173/"; // Redirect to home page
+    };
+	const dataProduct = [
+		{
+			id: 1,
+			name: "Kit Neo65",
+			price: 3500000,
+			priceSale: 300000,
+
+			description: "Layout 65% from NEO Keyboard",
+			thumbnail: "/images/products/neo.jpg",
+		},
+		{
+			id: 2,
+			name: "Kit Neo80",
+			price: 3500000,
+			priceSale: 3000000,
+
+			description: "Layout 80 from NEO Keyboard",
+			thumbnail: "/images/products/neo.jpg",
+		},
+		{
+			id: 2,
+			name: "Kit Neo80",
+			price: 3500000,
+			priceSale: 2500000,
+
+			description: "Layout 80 from NEO Keyboard",
+			thumbnail: "/images/products/neo.jpg",
+		},
+		{
+			id: 2,
+			name: "Kit Neo80",
+			price: 3500000,
+			priceSale: 1900000,
+
+			description: "Layout 80 from NEO Keyboard",
+			thumbnail: "/images/products/neo.jpg",
+		},
+		{
+			id: 2,
+			name: "Kit Neo80",
+			price: 3500000,
+			priceSale: 3200000,
+			description: "Layout 80 from NEO Keyboard",
+			thumbnail: "/images/products/neo.jpg",
+		},
+		{
+			id: 2,
+			name: "Kit Neo80",
+			price: 3500000,
+			priceSale: 1900000,
+
+			description: "Layout 80 from NEO Keyboard",
+			thumbnail: "/images/products/neo.jpg",
+		},
+	];
 		loadProducts()
 			.then((response) => response)
 			.then((data) => setProducts(data));
@@ -183,7 +267,17 @@ const HomePage = () => {
 					</div>
 				</Content>
 			</Layout>
+			<Modal
+            title="Thanh toán thành công"
+            visible={paymentSuccess}
+            onCancel={handleModalCancel} 
+			onOk={handleModalCancel}
+        	>
+            <p>Đơn hàng của bạn đã được tiếp nhận.</p>
+            {/* Add additional content or actions here */}
+        </Modal>
 		</div>
+		
 	);
 };
 
