@@ -18,7 +18,7 @@ const contentStyle = {
 
 const footerStyle = {
 	color: "#fff",
-	backgroundColor: "#4096ff",
+	backgroundColor: "#3b3b3b",
 };
 const layoutStyle = {
 	borderRadius: 8,
@@ -65,10 +65,13 @@ const LayoutShop = () => {
 										element={<ShopCategory />}
 									/>
 									<Route
+										path="all"
+										element={<ShopCategory />}
+									/>
+									<Route
 										path=":id"
 										element={<ProductDetail />}
 									/>
-									<Route path="*" element={<HomePage />} />
 								</Route>
 								<Route path="/liked" element={<Liked />} />
 								<Route path="/cart" element={<Cart />} />

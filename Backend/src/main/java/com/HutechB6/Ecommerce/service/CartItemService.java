@@ -2,7 +2,10 @@ package com.HutechB6.Ecommerce.service;
 
 import com.HutechB6.Ecommerce.model.CartItem;
 import com.HutechB6.Ecommerce.model.Product;
+import com.HutechB6.Ecommerce.model.User;
+import com.HutechB6.Ecommerce.repository.ICartItemRepository;
 import com.HutechB6.Ecommerce.repository.IProductRepository;
+import com.HutechB6.Ecommerce.repository.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,44 +14,75 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class CartItemService {
-    private List<CartItem> cartItems = new ArrayList<>();
 
     @Autowired
     private IProductRepository productRepository;
+    @Autowired
+    private IUserRepository userRepository;
+    @Autowired
+    private ICartItemRepository cartItemRepository;
 
-    public void addToCart(Long productId, int quantity){
-        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
-        for(CartItem item : cartItems){
-            if(item.getProduct().getId().equals(product.getId())){
-                item.setQuantity(item.getQuantity()+quantity);
-                return;
+    public List<CartItem> getCartItemsFull(){
+
+        return cartItemRepository.findAllCartItemsWithProductAndUser();
+    }
+    public Optional<CartItem> getCartById(Long id) {
+        return cartItemRepository.findById(id);
+    }
+
+    public List<CartItem> getCartsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+        return cartItemRepository.findByUser(user);
+    }
+    public List<CartItem> getCartsByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username " + username));
+        return cartItemRepository.findByUser(user);
+    }
+    public CartItem addCart(String username, Long productId, int quantity) {
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found with id " + username));
+        List<CartItem> user_cart = cartItemRepository.findByUser(user);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id " + productId));
+        for(CartItem c : user_cart){
+            if(c.getProduct().equals(product)){
+
+                return updateCart(c.getId(), username, c.getQuantity()+quantity);
             }
         }
-        cartItems.add(new CartItem(product, quantity));
-    }
-    public void updateCart(Long productId, int quantity) {
-        // Logic để cập nhật số lượng sản phẩm trong giỏ hàng
-        for(CartItem c : cartItems){
-            if(c.getProduct().getId().equals(productId)){
-                c.setQuantity(quantity);
-            }
-        }
 
-    }
-    public List<CartItem> getCartItems() {
-        return cartItems;
+
+        CartItem cart = new CartItem();
+        cart.setUser(user);
+        cart.setProduct(product);
+        cart.setQuantity(quantity);
+
+        return cartItemRepository.save(cart);
     }
 
-    public void removeFromCart(Long productId) {
-        cartItems.removeIf(item -> item.getProduct().getId().equals(productId));
+    public CartItem updateCart(Long id, String username, int quantity) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + username));
+
+        return cartItemRepository.findById(id)
+                .map(cart -> {
+                    cart.setUser(user);
+                    cart.setQuantity(quantity);
+                    return cartItemRepository.save(cart);
+                })
+                .orElseThrow(() -> new RuntimeException("Cart not found with id " + id));
     }
 
-    public void clearCart() {
-        cartItems.clear();
+    public void deleteCart(Long id) {
+        cartItemRepository.deleteById(id);
     }
+
 }

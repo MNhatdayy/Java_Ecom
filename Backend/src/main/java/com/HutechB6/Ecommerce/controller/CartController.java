@@ -1,92 +1,72 @@
 package com.HutechB6.Ecommerce.controller;
 
+import com.HutechB6.Ecommerce.DTO.CartRequest;
+import com.HutechB6.Ecommerce.DTO.CartUpdateRequest;
 import com.HutechB6.Ecommerce.model.CartItem;
-import com.HutechB6.Ecommerce.service.CartService;
+import com.HutechB6.Ecommerce.model.Product;
+import com.HutechB6.Ecommerce.service.CartItemService;
 import com.HutechB6.Ecommerce.service.ProductImagesService;
 import com.HutechB6.Ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/cart")
 public class CartController {
     @Autowired
-    private CartService cartService;
+    private CartItemService cartItemService;
     @Autowired
     private ProductService productService;
     @Autowired
     private ProductImagesService productImageService;
     @GetMapping
-    public String showCart(Model model) {
-        List<CartItem> cartItemList = cartService.getCartItems();
-        double total = 0;
-        for(CartItem item : cartItemList){
-            total = total + item.getProduct().getPrice()*item.getQuantity();
+    public List<CartItem> getAllCartItems(){
+        return cartItemService.getCartItemsFull();
+    }
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<CartItem>> getCartsByUsername(@PathVariable String username) {
+        List<CartItem> carts = cartItemService.getCartsByUsername(username);
+        List<CartItem> temp = new ArrayList<>();
+        for(CartItem t : carts){
+            Product p = t.getProduct();
+            p.setCartItemList(null);
+            p.setFavouriteList(null);
+            p.setOrderDetails(null);
+            p.setProductReviews(null);
+            p.setProductImages(null);
+
+            t.setProduct(p);
+            t.setUser(null);
+            temp.add(t);
         }
-        model.addAttribute("cartItems", cartService.getCartItems());
-        model.addAttribute("totalPrice", total);
-        return "/cart/cart";
+        return new ResponseEntity<>(temp, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public String addToCart(@RequestParam Long productId, @RequestParam int quantity, RedirectAttributes redirectAttributes){
-        int realQuantity = productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:")).getQuantity();
-        List<CartItem> cartItems = cartService.getCartItems();
-        CartItem item = new CartItem(productService.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:")), quantity);
-
-        int temp = 0;
-        if (!cartItems.contains(item)){
-            if(realQuantity < quantity){
-
-                redirectAttributes.addAttribute("error", "Số lượng không đủ");
-                return "redirect:/products/" + productId;
-            }
-
-        }
-
-        else{
-            for(CartItem i : cartItems){
-                if(i.getProduct().getId().equals(productId))
-
-                    if(realQuantity < (i.getQuantity()+quantity)){
-
-                        redirectAttributes.addAttribute("error", "Số lượng không đủ");
-                        return "redirect:/products/" + productId;
-                    }
-            }
-        }
-
-        cartService.addToCart(productId, quantity);
-        return "redirect:/cart";
+    @PostMapping
+    public ResponseEntity<CartItem> addCart(@RequestBody CartRequest cartRequest) {
+        CartItem createdCart = cartItemService.addCart(cartRequest.getUsername(), cartRequest.getProductId(), cartRequest.getQuantity());
+        return new ResponseEntity<>(createdCart, HttpStatus.CREATED);
     }
-    @GetMapping("/remove/{productId}")
-    public String removeFromCart(@PathVariable Long productId) {
-        cartService.removeFromCart(productId);
-        return "redirect:/cart";
-    }
-    @GetMapping("/clear")
-    public String clearCart() {
-        cartService.clearCart();
-        return "redirect:/cart";
-    }
-    @PostMapping("/update-cart")
-    @ResponseBody
-    public Map<String, Object> updateCart(@RequestBody CartItem request) {
-        Map<String, Object> response = new HashMap<>();
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CartItem> updateCart(@PathVariable Long id, @RequestBody CartUpdateRequest cartRequest) {
         try {
-            cartService.updateCart(request.getProduct().getId(), request.getQuantity());
-            response.put("success", true);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
+            CartItem updatedCart = cartItemService.updateCart(id, cartRequest.getUsername(), cartRequest.getQuantity());
+            return new ResponseEntity<>(updatedCart, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return response;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCart(@PathVariable Long id) {
+        cartItemService.deleteCart(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
