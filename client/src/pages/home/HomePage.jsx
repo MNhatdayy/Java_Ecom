@@ -1,5 +1,5 @@
 import "./home.scss";
-import { Button, Layout } from "antd";
+import { Button, Empty, Layout } from "antd";
 import Slider from "react-slick";
 import { useEffect } from "react";
 import { loadProducts } from "../../services/HomeController";
@@ -35,18 +35,11 @@ var settings = {
 const HomePage = () => {
 	const [products, setProducts] = useState([]);
 	useEffect(() => {
-		const fetchCartItems = async () => {
-			try {
-				const data = await loadProducts();
-				setProducts(data || []); // Ensure cartItems is an array
-			} catch (error) {
-				console.error("Error loading cart items:", error);
-			}
-		};
-
-		fetchCartItems();
+		loadProducts()
+			.then((response) => response)
+			.then((data) => setProducts(data));
 	}, []);
-
+	console.log(products);
 	return (
 		<div>
 			<Layout>

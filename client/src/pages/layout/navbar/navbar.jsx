@@ -151,6 +151,11 @@ const NavbarComponent = () => {
 							</Link>
 						</Badge>
 					</div>
+					<div className="navbar--cart">
+						<Link to={"/shop/liked"}>
+							<i className="fa fa-heart"></i>
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>

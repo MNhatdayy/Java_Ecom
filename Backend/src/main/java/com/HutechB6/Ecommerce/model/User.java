@@ -45,6 +45,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
 
     private List<CartItem> cartItemList;
+    @OneToMany(mappedBy = "user")
+    private List<FavouriteProduct> favouriteList;
 
     @Enumerated(value = EnumType.STRING)
     Role role;

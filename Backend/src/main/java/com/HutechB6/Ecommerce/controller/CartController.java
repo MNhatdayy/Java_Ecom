@@ -3,6 +3,7 @@ package com.HutechB6.Ecommerce.controller;
 import com.HutechB6.Ecommerce.DTO.CartRequest;
 import com.HutechB6.Ecommerce.DTO.CartUpdateRequest;
 import com.HutechB6.Ecommerce.model.CartItem;
+import com.HutechB6.Ecommerce.model.Product;
 import com.HutechB6.Ecommerce.service.CartItemService;
 import com.HutechB6.Ecommerce.service.ProductImagesService;
 import com.HutechB6.Ecommerce.service.ProductService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -30,7 +32,20 @@ public class CartController {
     @GetMapping("/user/{username}")
     public ResponseEntity<List<CartItem>> getCartsByUsername(@PathVariable String username) {
         List<CartItem> carts = cartItemService.getCartsByUsername(username);
-        return new ResponseEntity<>(carts, HttpStatus.OK);
+        List<CartItem> temp = new ArrayList<>();
+        for(CartItem t : carts){
+            Product p = t.getProduct();
+            p.setCartItemList(null);
+            p.setFavouriteList(null);
+            p.setOrderDetails(null);
+            p.setProductReviews(null);
+            p.setProductImages(null);
+
+            t.setProduct(p);
+            t.setUser(null);
+            temp.add(t);
+        }
+        return new ResponseEntity<>(temp, HttpStatus.OK);
     }
 
     @PostMapping
