@@ -5,6 +5,9 @@ import Slider from "react-slick";
 import { useEffect, useState } from "react";
 import { loadProductById } from "../../../services/HomeController";
 import { addToCart } from "../../../services/CartController";
+import { HeartOutlined } from "@ant-design/icons";
+import { HeartFilled } from "@ant-design/icons";
+import { checkLikeItem, likeItem, unlikeItem } from "../../../services/LikedController";
 
 var settings = {
 	dots: true,
@@ -19,6 +22,7 @@ const ProductDetail = () => {
 	const [productDetail, setProductDetail] = useState("");
 	const [quantity, setQuantity] = useState(1);
 	const [itemBread, setItem] = useState([]);
+	const [liked, setLiked] = useState(0);
 	const onChange = (value) => {
 		setQuantity(value);
 	};
@@ -32,6 +36,41 @@ const ProductDetail = () => {
 				// Xử lý lỗi nếu có
 			});
 	};
+	const handleLiked = (productId) => {
+		likeItem(productId)
+			.then((response) => {
+				console.log(response);
+				setLiked(1);
+			})
+			.catch((error) => {
+				console.error("Lỗi khi thích sản phẩm", error)
+			});
+
+	}
+	const handleUnLiked = (productId) => {
+		unlikeItem(productId)
+			.then((response) => {
+				console.log(response);
+				setLiked(0);
+			})
+			.catch((error) => {
+				console.error("Lỗi khi unlike", error);
+			});
+	}
+	
+	useEffect(() => {
+		// Kiểm tra xem sản phẩm đã được thích hay chưa khi component được mount
+		const fetchLikedStatus = async () => {
+		try {
+			const response = await checkLikeItem(id);
+			setLiked(response); // Giả sử API trả về đối tượng có thuộc tính 'liked'
+		} catch (error) {
+			console.error("Lỗi khi kiểm tra trạng thái thích sản phẩm", error);
+		}
+		};
+	
+		fetchLikedStatus();
+	}, [id]);
 	useEffect(() => {
 		const fetchCartItems = async () => {
 			try {
@@ -55,6 +94,7 @@ const ProductDetail = () => {
 		};
 		fetchCartItems();
 	}, [id, itemBread]);
+	
 
 	return (
 		<>
@@ -98,6 +138,11 @@ const ProductDetail = () => {
 									currency: "VND",
 								}).format(productDetail.price)}
 							</p>
+							<Button
+								icon={liked ? <HeartFilled /> : <HeartOutlined />}
+								shape="circle"
+								onClick={liked ? () => handleUnLiked(productDetail.id) : () => handleLiked(productDetail.id)}
+							></Button>
 							{/* <p className="product--version">
 								Version: Bridge75
 							</p> */}
@@ -112,7 +157,7 @@ const ProductDetail = () => {
 								<Button
 									block
 									className="btn-add-cart"
-									href="/cart"
+									href="/shop/cart"
 									onClick={() =>
 										handleAddToCart(
 											productDetail.id,

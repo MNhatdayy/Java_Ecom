@@ -43,7 +43,17 @@ public class ProductController {
         List<Product> products = productService.getAllProducts();
 
         if (category == null || category.isEmpty()) {
-            return products;
+            List<Product> temp = new ArrayList<>();
+            for (Product product : products) {
+                product.setCartItemList(null);
+                product.setProductImages(null);
+                product.setProductReviews(null);
+                product.setFavouriteList(null);
+                product.setOrderDetails(null);
+                temp.add(product);
+            }
+
+            return temp;
         }
 
         List<Product> list = new ArrayList<>();
@@ -88,6 +98,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductByIdWithImages(id);
+        product.setProductReviews(null);
+        product.setProductImages(null);
+        product.setOrderDetails(null);
+        product.setFavouriteList(null);
+        product.setCartItemList(null);
         return ResponseEntity.ok().body(product);
     }
     @PutMapping("/{id}")
