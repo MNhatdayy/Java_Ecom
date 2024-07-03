@@ -1,25 +1,31 @@
 /* eslint-disable react/prop-types */
 import "./productComponent.scss";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { SearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { addToCart } from "../../../services/CartController";
-import { useNavigate } from "react-router-dom";
+
 const ProductComponent = ({ product }) => {
-	const navigate = useNavigate();
+	const [messageApi, contextHolder] = message.useMessage();
+
 	const handleAddToCart = (cartId, quantity) => {
 		addToCart(cartId, quantity)
-			.then((response) => {
-				console.log("Cart updated:", response);
-				navigate("/shop/cart");
+			.then(() => {
+				messageApi.open({
+					type: "success",
+					content: "Add products success !",
+				});
 			})
 			.catch((error) => {
-				console.error("Error updating cart:", error);
-				// Xử lý lỗi nếu có
+				messageApi.open({
+					type: "error",
+					content: "Add product failed ! " + error,
+				});
 			});
 	};
 	return (
 		<>
+			{contextHolder}
 			<div className="product--card">
 				<div className="product--img">
 					<img

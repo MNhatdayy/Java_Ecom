@@ -43,9 +43,10 @@ public class Product {
     private Set<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "product")
-
+    @JsonIgnore
     private List<CartItem> cartItemList;
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<FavouriteProduct> favouriteList;
 
 }

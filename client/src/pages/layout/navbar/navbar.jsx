@@ -90,7 +90,7 @@ const NavbarComponent = () => {
 		};
 
 		fetchCartItems();
-	}, [current]);
+	}, [current, cartCount]);
 
 	return (
 		<div className="navbar--wrapper">

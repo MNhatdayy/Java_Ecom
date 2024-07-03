@@ -1,9 +1,36 @@
+<<<<<<< .mine
+<<<<<<< .mine
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './cart.scss';
 import { deleteCart, loadCartItems, updateCart } from '../../services/CartController';
 import { Button, InputNumber, Space, Table } from 'antd';
 import { parseToken } from '../../services/AuthController';
+
+
+=======
+import { useEffect, useState } from "react";
+=======
+import { useEffect, useState } from "react";
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
+import "./cart.scss";
+import {
+	deleteCart,
+	loadCartItems,
+	updateCart,
+} from "../../services/CartController";
+import { Button, InputNumber, Space, Table } from "antd";
+>>>>>>> .theirs
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -33,12 +60,93 @@ const Cart = () => {
         }
     };
 
+<<<<<<< .mine
     const handleUpdateQuantity = async (newQuantity, cartId) => {
         try {
             const response = await updateCart(cartId, newQuantity);
             console.log('Cart updated:', response);
             const updatedItems = cartItems.map(item => item.id === cartId ? { ...item, quantity: newQuantity } : item);
             setCartItems(updatedItems);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+	const columns = [
+		{
+			title: "Image",
+			dataIndex: "imageUrl",
+			key: "imageUrl",
+			render: (text, record) => (
+				<img
+					src={`http://localhost:8099${record.imageUrl}`}
+					alt={record.name}
+					style={{
+						width: "80px",
+						objectFit: "contain",
+					}}
+				/>
+			),
+		},
+		{ title: "Name", dataIndex: "name", key: "name" },
+		{
+			title: "Quantity",
+			dataIndex: "quantity",
+			key: "quantity",
+			render: (text, record) => (
+				<InputNumber
+					min={0}
+					value={record.quantity}
+					onChange={(value) => handleUpdateQuantity(value, record.id)}
+				/>
+			),
+		},
+		{ title: "Price", dataIndex: "price", key: "price" },
+		{
+			title: "Action",
+			key: "action",
+			render: (text, record) => (
+				<Space size="middle">
+					<Button onClick={() => handleDeleteItem(record.id)}>
+						Delete
+					</Button>
+				</Space>
+			),
+		},
+	];
+>>>>>>> .theirs
 
             const calculatedPrice = updatedItems.reduce((total, item) => total + item.quantity * item.price, 0);
             setTotalPrice(calculatedPrice);
@@ -66,9 +174,9 @@ const Cart = () => {
     };
 
     const columns = [
-        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name' },
+        { title: 'T�n s?n ph?m', dataIndex: 'name', key: 'name' },
         {
-            title: 'Số lượng',
+            title: 'S? lu?ng',
             dataIndex: 'quantity',
             key: 'quantity',
             render: (text, record) => (
@@ -80,7 +188,7 @@ const Cart = () => {
             ),
         },
         {
-            title: 'Ảnh',
+            title: '?nh',
             dataIndex: 'imageUrl',
             key: 'imageUrl',
             render: (text, record) => (
@@ -95,13 +203,13 @@ const Cart = () => {
                 />
             ),
         },
-        { title: 'Giá', dataIndex: 'price', key: 'price' },
+        { title: 'Gi�', dataIndex: 'price', key: 'price' },
         {
-            title: 'Thao tác',
+            title: 'Thao t�c',
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button onClick={() => handleDeleteItem(record.id)}>Xóa</Button>
+                    <Button onClick={() => handleDeleteItem(record.id)}>X�a</Button>
                 </Space>
             ),
         },
@@ -118,7 +226,7 @@ const Cart = () => {
         <div className="full">
             <div id="container">
                 <div className="cart--wrapper">
-                    <h3>Giỏ hàng của bạn</h3>
+                    <h3>Gi? h�ng c?a b?n</h3>
                     <div className="cart--container">
                         <div className="cart--list">
                             <Table
@@ -131,7 +239,7 @@ const Cart = () => {
                         </div>
                         <div className="cart--total">
                             <div className="price">
-                                <p>Tổng cộng:</p>
+                                <p>T?ng c?ng:</p>
                                 <p>
                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}
                                 </p>
@@ -143,7 +251,7 @@ const Cart = () => {
                                     block
                                     onClick={handleCheckout}
                                 >
-                                    Thanh toán
+                                    Thanh to�n
                                 </Button>
                             </div>
                         </div>
