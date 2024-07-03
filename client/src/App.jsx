@@ -69,9 +69,11 @@ import CreateProduct from "./pages/@admin/pages/management/products/Create.jsx";
 import UpdateProduct from "./pages/@admin/pages/management/products/Update.jsx";
 import Orders from "./pages/@admin/pages/management/orders/Orders.jsx";
 import OrderDetail from "./pages/@admin/pages/management/orders/Detail.jsx";
-
+import Order from "./pages/order/Order";
+import PaymentConfirmation  from "./pages/order/PaymentConfirmation"
 import { loadCartItems } from "./services/CartController.js";
 import { toast } from 'react-toastify';
+import PaymentPage from "./pages/order/payment/PaymentPage";
 
 
 function App() {
@@ -160,15 +162,14 @@ function App() {
 							<Route path="contact" element={<Contact />} />
 							
 						</Route>
-						<Route path="cart" element={<Cart 
-							
-							
-							/>} />
+						<Route path="cart" element={<Cart />} />
+						<Route path="order" element={<Order/>} />
+						<Route path="payment" element={<PaymentPage/>}/>
 						<Route path="/auth/*">
 							<Route path="login" element={<Login />} />
 							<Route path="register" element={<Register />} />
 						</Route>
-
+						<Route path="paymentconfirmation" element={<PaymentConfirmation/>} /> 
 						<Route exact path="/" element={<HomePage />} replace />
 					</Routes>
 				</Router>

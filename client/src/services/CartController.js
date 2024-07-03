@@ -149,3 +149,7 @@ export const updateCart = async function (cartId, quantity) {
       toast.error('Failed to remove items from cart');
     }
   };
+  export const clearCart = () => {
+    // Clear the cart logic, e.g., remove items from local storage or context
+    localStorage.removeItem('cartItems');
+  };

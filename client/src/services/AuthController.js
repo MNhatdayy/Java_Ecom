@@ -59,3 +59,4 @@ export const parseToken = () => {
 		return null;
 	}
 };
+

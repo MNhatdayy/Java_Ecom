@@ -1,11 +1,7 @@
 package com.HutechB6.Ecommerce.service;
 
-import com.HutechB6.Ecommerce.model.CartItem;
-import com.HutechB6.Ecommerce.model.Order;
-import com.HutechB6.Ecommerce.model.OrderDetail;
-import com.HutechB6.Ecommerce.model.User;
-import com.HutechB6.Ecommerce.repository.IOrderDetailRepository;
-import com.HutechB6.Ecommerce.repository.IOrderRepository;
+import com.HutechB6.Ecommerce.model.*;
+import com.HutechB6.Ecommerce.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +19,21 @@ public class OrderService {
     @Autowired
     private IOrderDetailRepository orderDetailRepository;
     @Autowired
-    private CartItemService cartItemService;  // Assuming you have a CartService
+    private ICartItemRepository cartItemRepository;  // Assuming you have a CartService
     @Autowired
-    private PaymentService paymentService;
+    private IPaymentRepository paymentRepository;
+    @Autowired
+    private UserDetailsServiceImp userService;
+    @Autowired
+    private IUserRepository userRepository;
     @Transactional
-    public Order createOrder(String customerName, String customerAddress, User currentUser, String customerPhone, long methodCheckout, List<CartItem> cartItems){
+    public Order createOrderSubmit(String customerName, String customerAddress, String customerPhone, List<CartItem> cartItems) {
         Order order = new Order();
         order.setCustomerName(customerName);
         order.setCustomerAddress(customerAddress);
-        order.setUser(currentUser);
         order.setCustomerPhone(customerPhone);
 
-        order.setPayment(paymentService.getPaymentById(methodCheckout).orElseThrow(() -> new IllegalArgumentException("Invalid payment Id:" + methodCheckout)));
         order = orderRepository.save(order);
-
         for (CartItem item : cartItems) {
             OrderDetail detail = new OrderDetail();
             detail.setOrder(order);
@@ -44,9 +41,13 @@ public class OrderService {
             detail.setQuantity(item.getQuantity());
             orderDetailRepository.save(detail);
         }
-
-
+        // Optionally clear the cart after order placement
+        cartItemRepository.clear();
         return order;
+    }
+
+    public Order createOrder(Order order) {
+        return orderRepository.save(order);
     }
     public Optional<Order> findOrderById(Long id) {
         return orderRepository.findById(id);

@@ -1,5 +1,5 @@
 import "./home.scss";
-import { Button, Layout } from "antd";
+import { Button, Layout,Modal,Result } from "antd";
 import Slider from "react-slick";
 import { useEffect } from "react";
 import { loadProducts } from "../../services/HomeController";
@@ -7,6 +7,7 @@ import { useState } from "react";
 const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
+import { getPaymentSuccessMessage } from '../../services/OrderController';
 const siderStyle = {
 	backgroundColor: "white",
 };
@@ -32,6 +33,7 @@ var settings = {
 };
 
 const HomePage = () => {
+	const [paymentSuccess, setPaymentSuccess] = useState(false);
 	const [products, setProducts] = useState([]);
 	useEffect(() => {
 		const fetchCartItems = async () => {
@@ -43,9 +45,24 @@ const HomePage = () => {
 				console.error("Error loading cart items:", error);
 			}
 		};
-	
+		checkPaymentSuccess();
 		fetchCartItems();
 	}, []); 
+	const checkPaymentSuccess = async () => {
+        const params = new URLSearchParams(window.location.search); // Get query parameters
+      	const vnp_ResponseCode = params.get("vnp_ResponseCode");
+
+      	if (vnp_ResponseCode === "00") {
+        // If VNPay response code indicates success
+        setPaymentSuccess(true); // Set payment success state to true
+        // Optional: Redirect to home or a success page after handling payment
+        // history.push("/success"); // Example redirect to /success route
+      }
+    };
+	const handleModalCancel = () => {
+        setPaymentSuccess(false); // Close the modal
+        window.location.href = "http://localhost:5173/"; // Redirect to home page
+    };
 	const dataProduct = [
 		{
 			id: 1,
@@ -242,7 +259,17 @@ const HomePage = () => {
 					</div>
 				</Content>
 			</Layout>
+			<Modal
+            title="Thanh toán thành công"
+            visible={paymentSuccess}
+            onCancel={handleModalCancel} 
+			onOk={handleModalCancel}
+        	>
+            <p>Đơn hàng của bạn đã được tiếp nhận.</p>
+            {/* Add additional content or actions here */}
+        </Modal>
 		</div>
+		
 	);
 };
 
