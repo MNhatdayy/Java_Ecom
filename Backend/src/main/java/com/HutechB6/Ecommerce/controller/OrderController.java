@@ -3,7 +3,6 @@ package com.HutechB6.Ecommerce.controller;
 
 import com.HutechB6.Ecommerce.DTO.OrderCreateRequest;
 import com.HutechB6.Ecommerce.DTO.PaymentDTO;
-import com.HutechB6.Ecommerce.DTO.UserDTO;
 import com.HutechB6.Ecommerce.model.*;
 
 import com.HutechB6.Ecommerce.service.*;
@@ -64,9 +63,19 @@ public class OrderController {
             order.setCustomerName(orderRequest.getCustomerName());
             order.setCustomerAddress(orderRequest.getCustomerAddress());
             order.setCustomerPhone(orderRequest.getCustomerPhone());
-            order.setUser(user); // Đặt người dùng cho đơn hàng
+
+            // Find payment method and verify existence
+            Payment payment = paymentService.getPaymentById(orderRequest.getPaymentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Payment not found with id: " + orderRequest.getPaymentId()));
+
+            // Set user and payment method for order
+            order.setUser(user);
             order.setPayment(payment);
-            // Tạo đơn hàng
+
+            // Log before creating order
+            System.out.println("Creating order: " + order);
+
+            // Create order
             Order createdOrder = orderService.createOrder(order);
 
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
