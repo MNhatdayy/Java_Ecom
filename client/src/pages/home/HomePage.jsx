@@ -1,5 +1,5 @@
 import "./home.scss";
-import { Button, Layout,Modal,Result } from "antd";
+import { Button,Empty, Layout,Modal,Result } from "antd";
 import Slider from "react-slick";
 import { useEffect } from "react";
 import { loadProducts } from "../../services/HomeController";
@@ -8,6 +8,7 @@ const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
 import { getPaymentSuccessMessage } from '../../services/OrderController';
+import { Link } from "react-router-dom";
 const siderStyle = {
 	backgroundColor: "white",
 };
@@ -118,6 +119,11 @@ const HomePage = () => {
 			thumbnail: "/images/products/neo.jpg",
 		},
 	];
+		loadProducts()
+			.then((response) => response)
+			.then((data) => setProducts(data));
+	}, []);
+	console.log(products);
 	return (
 		<div>
 			<Layout>
@@ -203,7 +209,7 @@ const HomePage = () => {
 							</div>
 						</div>
 
-						<div className="sale--wrapper">
+						{/* <div className="sale--wrapper">
 							<div className="title flip-animation">
 								<span>S</span>
 								<span>A</span>
@@ -227,7 +233,7 @@ const HomePage = () => {
 									View more details
 								</Button>
 							</div>
-						</div>
+						</div> */}
 
 						<div className="gb--wrapper">
 							<div className="title flip-animation">
@@ -251,9 +257,11 @@ const HomePage = () => {
 								})}
 							</div>
 							<div className="actions">
-								<Button shape="round" type="primary">
-									View more details
-								</Button>
+								<Link to={"/shop/product/all"}>
+									<Button shape="round" type="primary">
+										View more details
+									</Button>
+								</Link>
 							</div>
 						</div>
 					</div>

@@ -8,6 +8,8 @@ import com.HutechB6.Ecommerce.service.CategoryService;
 import com.HutechB6.Ecommerce.service.ProductImagesService;
 import com.HutechB6.Ecommerce.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +39,30 @@ public class ProductController {
     private CategoryService categoryService;
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts(@Nullable @PathParam("category") String category) {
         List<Product> products = productService.getAllProducts();
-        return products;
+
+        if (category == null || category.isEmpty()) {
+            List<Product> temp = new ArrayList<>();
+            for (Product product : products) {
+                product.setCartItemList(null);
+                product.setProductImages(null);
+                product.setProductReviews(null);
+                product.setFavouriteList(null);
+                product.setOrderDetails(null);
+                temp.add(product);
+            }
+
+            return temp;
+        }
+
+        List<Product> list = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getCategory().getName().toLowerCase().equals(category)) {
+                list.add(product);
+            }
+        }
+        return list;
     }
     @PostMapping
     public ResponseEntity<Product> createProduct(
@@ -75,6 +98,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductByIdWithImages(id);
+        product.setProductReviews(null);
+        product.setProductImages(null);
+        product.setOrderDetails(null);
+        product.setFavouriteList(null);
+        product.setCartItemList(null);
         return ResponseEntity.ok().body(product);
     }
     @PutMapping("/{id}")

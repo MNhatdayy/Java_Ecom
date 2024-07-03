@@ -31,7 +31,7 @@ export const register = async function (username, email, password, phone) {
 };
 
 export const logout = function () {
-	window.localStorage.removeItem("token");
+	window.sessionStorage.removeItem("token");
 };
 // export const restorePasswordByMail = async function (email) {
 // 	const respone = await request("POST", "products/restore", {

@@ -25,6 +25,7 @@ public class Product {
 
     private String name;
     private double price;
+    private double salePrice;
     private String imageUrl;
     private int quantity;
     private String description;
@@ -44,5 +45,7 @@ public class Product {
     @OneToMany(mappedBy = "product")
 
     private List<CartItem> cartItemList;
+    @OneToMany(mappedBy = "product")
+    private List<FavouriteProduct> favouriteList;
 
 }

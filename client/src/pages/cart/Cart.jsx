@@ -1,102 +1,38 @@
-import './cart.scss';
-import { Button, Layout, Row, Col, Image } from 'antd';
-import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
-import HeaderComponent from '../layout/HeaderComponent';
-import FooterComponent from '../layout/FooterComponent';
-import { deleteCart, loadCartItems, updateCart } from '../../services/CartController';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const { Header, Footer, Content } = Layout;
-
-const headerStyle = {
-	color: "#fff",
-	height: 70,
-	backgroundColor: "white",
-};
-const contentStyle = {
-	minHeight: 100,
-	color: "#fff",
-	marginTop: 24,
-};
-const footerStyle = {
-	color: "#fff",
-	backgroundColor: "#3b3b3b",
-};
-const layoutStyle = {
-	borderRadius: 8,
-	width: "100%",
-};
-const h1Style = {
-	fontSize: '25pt',
-	marginBottom: '20px'
-};
-const h2Style = {
-	color: 'black',
-	fontSize: '22pt',
-	marginBottom: '20px'
-};
-const ButtonStyled = styled(Button)`
-	background-color: black;
-	margin-bottom: 20px;
-	color: white;
-	float: right;
-	margin-right: 20px;
-`;
-const ContainerStyle = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
-const RowStyled = styled(Row)`
-	margin-bottom: 20px;
-	display: flex;
-	width: 80%;
-`;
-const ColStyled = styled(Col)`
-	background-color: #f0f0f0;
-	padding: 20px;
-`;
-const TextStyled = styled.span`
-	color: black;
-	font-size: 20px;
-`;
-const ImageStyled = styled(Image)``;
-const PlusOutlinedStyled = styled(PlusOutlined)`
-	color: black;
-	border: 1px solid #ccc;
-	font-size: 20px;
-	transition: transform 0.2s ease-in-out;
-	&:hover {
-		transform: scale(1.2);
-	}
-`;
-const MinusOutlinedStyled = styled(MinusOutlined)`
-	color: black;
-	border: 1px solid #ccc;
-	font-size: 20px;
-	transition: transform 0.2s ease-in-out;
-	&:hover {
-		transform: scale(1.2);
-	}
-`;
+import React, { useEffect, useState } from "react";
+import "./cart.scss";
+import {
+	deleteCart,
+	loadCartItems,
+	updateCart,
+} from "../../services/CartController";
+import { Button, InputNumber, Space, Table } from "antd";
 
 const Cart = () => {
 	const [cartItems, setCartItems] = useState([]);
-	const navigate = useNavigate();
+
 
 	useEffect(() => {
 		const fetchCartItems = async () => {
 			try {
 				const data = await loadCartItems();
 				console.log("Fetched cart items:", data);
+
 				setCartItems(data || []);
+
+				setCartItems(
+					data.map((ele) => ({
+						id: ele.id,
+						name: ele.product.name,
+						quantity: ele.quantity,
+						imageUrl: ele.product.imageUrl,
+						price: ele.product.price,
+					})) || []
+				);
 			} catch (error) {
 				console.error("Error loading cart items:", error);
 			}
 		};
-
 		fetchCartItems();
 	}, []);
 
@@ -193,7 +129,128 @@ const Cart = () => {
 				</div>
 			</div>
 		</>
+		fetchCartItems();
+	}, []);
+
+	const handleUpdateQuantity = async (newQuantity, cartId) => {
+		if (newQuantity === 0) {
+			handleDeleteItem(cartId);
+			return;
+		}
+		try {
+			const response = await updateCart(cartId, newQuantity);
+			console.log("Cart updated:", response);
+			const updatedItems = cartItems.map((item) =>
+				item.id === cartId ? { ...item, quantity: newQuantity } : item
+			);
+			setCartItems(updatedItems);
+		} catch (error) {
+			console.error("Error updating cart:", error);
+		}
+	};
+
+	const handleDeleteItem = async (cartId) => {
+		try {
+			const response = await deleteCart(cartId);
+			if (response === 204) {
+				console.log("Successfully deleted product:", response);
+				const updatedItems = cartItems.filter(
+					(item) => item.id !== cartId
+				);
+				setCartItems(updatedItems);
+			} else {
+				console.log("Delete action was cancelled");
+			}
+		} catch (error) {
+			console.error("Error deleting product:", error);
+		}
+	};
+
+	const columns = [
+		{ title: "Name", dataIndex: "name", key: "name" },
+		{
+			title: "Quantity",
+			dataIndex: "quantity",
+			key: "quantity",
+			render: (text, record) => (
+				<InputNumber
+					min={0}
+					value={record.quantity}
+					onChange={(value) => handleUpdateQuantity(value, record.id)}
+				/>
+			),
+		},
+		{
+			title: "Image",
+			dataIndex: "imageUrl",
+			key: "imageUrl",
+			render: (text, record) => (
+				<img
+					src={`http://localhost:8099${record.imageUrl}`}
+					alt={record.name}
+					style={{
+						width: "100px",
+						height: "100px",
+						objectFit: "contain",
+					}}
+				/>
+			),
+		},
+		{ title: "Price", dataIndex: "price", key: "price" },
+		{
+			title: "Action",
+			key: "action",
+			render: (text, record) => (
+				<Space size="middle">
+					<Button onClick={() => handleDeleteItem(record.id)}>
+						Delete
+					</Button>
+				</Space>
+			),
+		},
+	];
+
+	const totalPrice = cartItems.reduce(
+		(price, item) => price + item.quantity * item.price,
+		0
+	);
+
+	return (
+		<div className="full">
+			<div id="container">
+				<div className="cart--wrapper">
+					<h3>Your Cart</h3>
+					<div className="cart--container">
+						<div className="cart--list">
+							<Table
+								columns={columns}
+								dataSource={cartItems}
+								rowKey="id"
+								pagination={false}
+								className="align-items-center-table"
+							/>
+						</div>
+						<div className="cart--total">
+							<div className="price">
+								<p>Total:</p>
+								<p>
+									{" "}
+									{new Intl.NumberFormat("vi-VN", {
+										style: "currency",
+										currency: "VND",
+									}).format(totalPrice)}
+								</p>
+							</div>
+							<div className="actions">
+								<Button type="primary" shape="round" block>
+									Check out
+								</Button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 };
-
 export default Cart;

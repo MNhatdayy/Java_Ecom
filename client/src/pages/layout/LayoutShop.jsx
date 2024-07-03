@@ -36,12 +36,9 @@ import Contact from "../shop/Contact/Contact";
 import ProductDetail from "../shop/ProductDetail/ProductDetail";
 
 const LayoutShop = () => {
-	
 	return (
 		<>
-			
 			<div className="full">
-				
 				<div id="container">
 					<Layout style={layoutStyle}>
 						<Header style={headerStyle}>
@@ -68,10 +65,13 @@ const LayoutShop = () => {
 										element={<ShopCategory />}
 									/>
 									<Route
+										path="all"
+										element={<ShopCategory />}
+									/>
+									<Route
 										path=":id"
 										element={<ProductDetail />}
 									/>
-									<Route path="*" element={<HomePage />} />
 								</Route>
 								<Route path="/liked" element={<Liked />} />
 								<Route path="/cart" element={<Cart />} />
