@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req -> req.requestMatchers("/login", "/register/**","/css/**", "/js/**", "/images/**", "/","/error","/products")
                                 .permitAll()
+
                                 .anyRequest()
                                 .permitAll()
                 ).userDetailsService(userDetailsServiceImp)

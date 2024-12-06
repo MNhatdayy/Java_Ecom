@@ -29,10 +29,13 @@ public class CategoryService {
     }
     /**
      * Add a new category to the database.
+     *
      * @param category the category to add
+     * @return
      */
-    public void addCategory(Category category) {
+    public Category addCategory(Category category) {
         categoryRepository.save(category);
+        return category;
     }
     /**
      * Update an existing category.

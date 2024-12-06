@@ -50,14 +50,12 @@ import LayoutAdmin from "./pages/@admin/layout/LayoutAdmin.jsx";
 import Dashboard from "./pages/@admin/pages/dashboard/Dashboard.jsx";
 import User from "./pages/@admin/pages/management/users/Users.jsx";
 import Categories from "./pages/@admin/pages/management/categories/Categories.jsx";
-import Invoices from "./pages/@admin/pages/management/invoices/Invoices.jsx";
 import Products from "./pages/@admin/pages/management/products/Products.jsx";
 
 import LayoutShop from "./pages/layout/LayoutShop.jsx";
 import HomePage from "./pages/home/HomePage.jsx";
 import ShopCategory from "./pages/shop/ShopByCategory/ShopCategory.jsx";
 
-import ProductDetail from "./pages/shop/ProductDetail/ProductDetail.jsx";
 import Liked from "./pages/liked/Liked.jsx";
 import Cart from "./pages/cart/Cart.jsx";
 import Contact from "./pages/shop/Contact/Contact.jsx";
@@ -65,10 +63,23 @@ import Contact from "./pages/shop/Contact/Contact.jsx";
 import { login, parseToken } from "./services/AuthController.js";
 import { useEffect, useState } from "react";
 
+import CreateCategory from "./pages/@admin/pages/management/categories/Create.jsx";
+import UpdateCategory from "./pages/@admin/pages/management/categories/Update.jsx";
+import CreateProduct from "./pages/@admin/pages/management/products/Create.jsx";
+import UpdateProduct from "./pages/@admin/pages/management/products/Update.jsx";
+import Orders from "./pages/@admin/pages/management/orders/Orders.jsx";
+import OrderDetail from "./pages/@admin/pages/management/orders/Detail.jsx";
+import Order from "./pages/order/Order";
+import PaymentConfirmation  from "./pages/order/PaymentConfirmation"
+import PaymentPage from "./pages/order/payment/PaymentPage";
+import { loadCartItems } from "./services/CartController.js";
+import { toast } from "react-toastify";
+
 function App() {
 	// const [count, setCount] = useState(0)
 	const [isLoggedIn, setLogin] = useState(false);
 	const [role, setRole] = useState("");
+
 	useEffect(() => {
 		const tokenInfo = parseToken();
 		if (tokenInfo !== null) {
@@ -77,6 +88,7 @@ function App() {
 			console.log(role);
 		}
 	}, []);
+
 	return (
 		<ConfigProvider
 			theme={{
@@ -102,12 +114,37 @@ function App() {
 									element={<Dashboard />}
 								/>
 								<Route path="user" element={<User />} />
-								<Route path="product" element={<Products />} />
-								<Route
-									path="category"
-									element={<Categories />}
-								/>
-								<Route path="invoice" element={<Invoices />} />
+								<Route path="products">
+									<Route path="" element={<Products />} />
+									<Route
+										path="create"
+										element={<CreateProduct />}
+									/>
+									<Route
+										path="update/:id"
+										element={<UpdateProduct />}
+									/>
+								</Route>
+
+								<Route path="categories">
+									<Route path="" element={<Categories />} />
+									<Route
+										path="create"
+										element={<CreateCategory />}
+									/>
+									<Route
+										path="update/:id"
+										element={<UpdateCategory />}
+									/>
+								</Route>
+
+								<Route path="orders">
+									<Route path="" element={<Orders />} />
+									<Route
+										path="detail/:id"
+										element={<OrderDetail />}
+									/>
+								</Route>
 							</Route>
 						)}
 						<Route path="/shop/*" element={<LayoutShop />}>
@@ -124,18 +161,27 @@ function App() {
 									element={<ShopCategory />}
 								/>
 								<Route
+									path="keycap"
+									element={<ShopCategory />}
+								/>
+								<Route
 									path="accessories"
 									element={<ShopCategory />}
 								/>
+								<Route path="all" element={<ShopCategory />} />
 							</Route>
+							<Route path="cart" element={<Cart />} />
+							<Route path="liked" element={<Liked />} />
 						</Route>
 						<Route path="" element={<LayoutShop />}>
 							<Route index element={<HomePage />} />
 							<Route path="" element={<HomePage />} />
 							<Route path="contact" element={<Contact />} />
-							<Route path="liked" element={<Liked />} />
-							<Route path="cart" element={<Cart />} />
 						</Route>
+						<Route path="order" element={<Order/>} />
+						<Route path="payment" element={<PaymentPage/>}/>
+						<Route path="paymentconfirmation" element={<PaymentConfirmation/>} /> 
+
 						<Route path="/auth/*">
 							<Route path="login" element={<Login />} />
 							<Route path="register" element={<Register />} />

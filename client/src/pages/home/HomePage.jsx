@@ -1,10 +1,13 @@
 import "./home.scss";
-import { Button, Layout } from "antd";
+import { Button, Empty, Layout,Modal } from "antd";
 import Slider from "react-slick";
-
+import { useEffect } from "react";
+import { loadProducts } from "../../services/HomeController";
+import { useState } from "react";
 const { Sider, Content } = Layout;
 
 import ProductComponent from "../shop/Products/ProductComponent";
+import { Link } from "react-router-dom";
 const siderStyle = {
 	backgroundColor: "white",
 };
@@ -30,61 +33,30 @@ var settings = {
 };
 
 const HomePage = () => {
-	const dataProduct = [
-		{
-			id: 1,
-			name: "Kit Neo65",
-			price: 3500000,
-			priceSale: 300000,
+	const [paymentSuccess, setPaymentSuccess] = useState(false);
+	const [products, setProducts] = useState([]);
+	useEffect(() => {
+		checkPaymentSuccess()
+		loadProducts()
+			.then((response) => response)
+			.then((data) => setProducts(data));
+	}, []);
+	console.log(products);
+	const checkPaymentSuccess = async () => {
+        const params = new URLSearchParams(window.location.search); // Get query parameters
+      	const vnp_ResponseCode = params.get("vnp_ResponseCode");
 
-			description: "Layout 65% from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 3000000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 2500000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 1900000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 3200000,
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-		{
-			id: 2,
-			name: "Kit Neo80",
-			price: 3500000,
-			priceSale: 1900000,
-
-			description: "Layout 80 from NEO Keyboard",
-			thumbnail: "/images/products/neo.jpg",
-		},
-	];
+      	if (vnp_ResponseCode === "00") {
+        // If VNPay response code indicates success
+        setPaymentSuccess(true); // Set payment success state to true
+        // Optional: Redirect to home or a success page after handling payment
+        // history.push("/success"); // Example redirect to /success route
+      }
+    };
+	const handleModalCancel = () => {
+        setPaymentSuccess(false); // Close the modal
+        window.location.href = "http://localhost:5173/"; // Redirect to home page
+    };
 	return (
 		<div>
 			<Layout>
@@ -170,7 +142,7 @@ const HomePage = () => {
 							</div>
 						</div>
 
-						<div className="sale--wrapper">
+						{/* <div className="sale--wrapper">
 							<div className="title flip-animation">
 								<span>S</span>
 								<span>A</span>
@@ -180,7 +152,7 @@ const HomePage = () => {
 							</div>
 
 							<div className="list-product">
-								{dataProduct.map((value, index) => {
+								{products.map((value, index) => {
 									return (
 										<ProductComponent
 											key={index}
@@ -194,7 +166,7 @@ const HomePage = () => {
 									View more details
 								</Button>
 							</div>
-						</div>
+						</div> */}
 
 						<div className="gb--wrapper">
 							<div className="title flip-animation">
@@ -208,7 +180,7 @@ const HomePage = () => {
 							</div>
 
 							<div className="list-product">
-								{dataProduct.map((value, index) => {
+								{products.map((value, index) => {
 									return (
 										<ProductComponent
 											key={index}
@@ -218,14 +190,25 @@ const HomePage = () => {
 								})}
 							</div>
 							<div className="actions">
-								<Button shape="round" type="primary">
-									View more details
-								</Button>
+								<Link to={"/shop/product/all"}>
+									<Button shape="round" type="primary">
+										View more details
+									</Button>
+								</Link>
 							</div>
 						</div>
 					</div>
 				</Content>
 			</Layout>
+			<Modal
+            title="Thanh toán thành công"
+            visible={paymentSuccess}
+            onCancel={handleModalCancel} 
+			onOk={handleModalCancel}
+        	>
+            <p>Đơn hàng của bạn đã được tiếp nhận.</p>
+            {/* Add additional content or actions here */}
+        </Modal>
 		</div>
 	);
 };

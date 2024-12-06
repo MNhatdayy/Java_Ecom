@@ -1,8 +1,14 @@
 import { useParams } from "react-router-dom";
 import "./productdetail.scss";
 import { Breadcrumb, Button, InputNumber } from "antd";
-import { Tabs } from "antd";
 import Slider from "react-slick";
+import { useEffect, useState } from "react";
+import { loadProductById } from "../../../services/HomeController";
+import { addToCart } from "../../../services/CartController";
+import { HeartOutlined } from "@ant-design/icons";
+import { HeartFilled } from "@ant-design/icons";
+import { checkLikeItem, likeItem, unlikeItem } from "../../../services/LikedController";
+
 var settings = {
 	dots: true,
 	infinite: true,
@@ -11,96 +17,112 @@ var settings = {
 	slidesToScroll: 1,
 };
 
-const items = [
-	{
-		key: "1",
-		label: "Infomation",
-		children: ` Chất liệu: ABS Double-Shot`,
-	},
-	{
-		key: "2",
-		label: "Payment guide",
-		children: (
-			<div className="payment-guide">
-				<h4>Hướng dẫn mua hàng:</h4>
-				<ul>
-					<li>
-						Truy cập vào link bán hàng trên web MOKB và chọn sản
-						phẩm cần mua
-					</li>
-					<li>Điều chỉnh số lượng sản phẩm muốn mua theo ý muốn</li>
-					<li>Chọn "thêm vào giỏ hàng" hoặc "Mua ngay"</li>
-				</ul>
-			</div>
-		),
-	},
-];
-
-const onChange = (value) => {
-	console.log("changed", value);
-};
-
-const onChangeTabs = (key) => {
-	console.log(key);
-};
-
 const ProductDetail = () => {
 	const { id } = useParams();
-
-	const productDetail = {
-		id: id,
-		name: "Bridge75 - Bàn phím cơ nhôm gaming 3 mode",
-		price: "1.740.000₫",
-		vendor: "Shortcut Studio",
-		thumbnail:
-			"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-black-no-rgb-1714960892028.jpg?v=1714967409093",
-		listImg: [
-			"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-black-no-rgb-1714960892028.jpg?v=1714967409093",
-			"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-white-plus-ver-1714960927140.jpg?v=1714967409093",
-			"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-cream-plus-1714960939334.jpg?v=1714967409093",
-			"https://bizweb.dktcdn.net/thumb/1024x1024/100/484/752/products/bridge75-pink-plus-ver-1714960950334.jpg?v=1714967409093",
-		],
-		category: {
-			id: 1,
-			name: "Kit",
-		},
+	const [productDetail, setProductDetail] = useState("");
+	const [quantity, setQuantity] = useState(1);
+	const [itemBread, setItem] = useState([]);
+	const [liked, setLiked] = useState(0);
+	const onChange = (value) => {
+		setQuantity(value);
 	};
+	const handleAddToCart = (cartId, quantity) => {
+		addToCart(cartId, quantity)
+			.then((response) => {
+				console.log("Cart updated:", response);
+			})
+			.catch((error) => {
+				console.error("Error updating cart:", error);
+				// Xử lý lỗi nếu có
+			});
+	};
+	const handleLiked = (productId) => {
+		likeItem(productId)
+			.then((response) => {
+				console.log(response);
+				setLiked(1);
+			})
+			.catch((error) => {
+				console.error("Lỗi khi thích sản phẩm", error)
+			});
+
+	}
+	const handleUnLiked = (productId) => {
+		unlikeItem(productId)
+			.then((response) => {
+				console.log(response);
+				setLiked(0);
+			})
+			.catch((error) => {
+				console.error("Lỗi khi unlike", error);
+			});
+	}
+	
+	useEffect(() => {
+		// Kiểm tra xem sản phẩm đã được thích hay chưa khi component được mount
+		const fetchLikedStatus = async () => {
+		try {
+			const response = await checkLikeItem(id);
+			setLiked(response); // Giả sử API trả về đối tượng có thuộc tính 'liked'
+		} catch (error) {
+			console.error("Lỗi khi kiểm tra trạng thái thích sản phẩm", error);
+		}
+		};
+	
+		fetchLikedStatus();
+	}, [id]);
+	useEffect(() => {
+		const fetchCartItems = async () => {
+			try {
+				const data = await loadProductById(id);
+				setProductDetail(data || []);
+				setItem([
+					{
+						title: "Home",
+					},
+					{
+						title:
+							productDetail.category?.name || "Unknown Category",
+						href: `/shop/product/${
+							productDetail.category?.name || "unknown"
+						}`,
+					},
+				]);
+			} catch (error) {
+				console.error("Error loading cart items:", error);
+			}
+		};
+		fetchCartItems();
+	}, [id, itemBread]);
+	
 
 	return (
 		<>
 			<div className="product--detail--wrapper">
 				<div className="breadcrumb">
-					<Breadcrumb
-						separator=">"
-						items={[
-							{
-								title: "Home",
-							},
-							{
-								title: "Kit",
-								href: "/shop/product/kit",
-							},
-						]}
-					/>
+					<Breadcrumb separator=">" items={itemBread} />
 				</div>
 				<div className="product--detail--container">
 					<div className="product--detail">
 						<div className="product--slide">
 							<Slider {...settings}>
-								{productDetail.listImg.map((value, index) => {
-									return (
-										<div
-											key={index}
-											className="product--slide--img">
-											<img
-												width="100%"
-												src={value}
-												alt="img"
-											/>
-										</div>
-									);
-								})}
+								{/* {productDetail.Images.map((ele) => {
+									<div className="product--slide--img">
+										<img
+											width="100%"
+											src={`http://localhost:8099${ele}`}
+											alt="img"
+										/>
+									</div>;
+								})} */}
 							</Slider>
+							<div className="product--slide--img">
+								<img
+									width="100%"
+									src={`http://localhost:8099${productDetail.imageUrl}`}
+									alt="img"
+								/>
+							</div>
 						</div>
 
 						<div className="product--info">
@@ -108,14 +130,22 @@ const ProductDetail = () => {
 								{productDetail.name}
 							</h3>
 							<p className="product--vendor">
-								{productDetail.vendor}
+								{productDetail.description}
 							</p>
 							<p className="product--price">
-								{productDetail.price}
+								{new Intl.NumberFormat("vi-VN", {
+									style: "currency",
+									currency: "VND",
+								}).format(productDetail.price)}
 							</p>
-							<p className="product--version">
+							<Button
+								icon={liked ? <HeartFilled /> : <HeartOutlined />}
+								shape="circle"
+								onClick={liked ? () => handleUnLiked(productDetail.id) : () => handleLiked(productDetail.id)}
+							></Button>
+							{/* <p className="product--version">
 								Version: Bridge75
-							</p>
+							</p> */}
 
 							<div className="product--actions">
 								<InputNumber
@@ -124,7 +154,16 @@ const ProductDetail = () => {
 									defaultValue={1}
 									onChange={onChange}
 								/>
-								<Button block className="btn-add-cart">
+								<Button
+									block
+									className="btn-add-cart"
+									href="/shop/cart"
+									onClick={() =>
+										handleAddToCart(
+											productDetail.id,
+											quantity
+										)
+									}>
 									Add to cart
 								</Button>
 							</div>
@@ -138,14 +177,6 @@ const ProductDetail = () => {
 								</Button>
 							</div>
 						</div>
-					</div>
-					<div className="product--detail--description">
-						<Tabs
-							defaultActiveKey="1"
-							centered
-							items={items}
-							onChange={onChangeTabs}
-						/>
 					</div>
 				</div>
 			</div>

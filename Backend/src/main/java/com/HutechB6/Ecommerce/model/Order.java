@@ -1,5 +1,6 @@
 package com.HutechB6.Ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Order {
     private String customerPhone;
 
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     private List<OrderDetail> orderDetails;
     @ManyToOne
     @JoinColumn(name = "user_id")

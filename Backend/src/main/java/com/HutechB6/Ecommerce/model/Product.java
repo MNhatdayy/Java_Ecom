@@ -1,5 +1,6 @@
 package com.HutechB6.Ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -23,6 +25,7 @@ public class Product {
 
     private String name;
     private double price;
+    private double salePrice;
     private String imageUrl;
     private int quantity;
     private String description;
@@ -30,14 +33,19 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-    //    @ManyToOne
-//    @JoinColumn(name = "supplier_id")
-//    private Supplier supplier;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<ProductImages> productImages;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductReview> productReviews;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "product")
+
+    private List<CartItem> cartItemList;
+    @OneToMany(mappedBy = "product")
+    private List<FavouriteProduct> favouriteList;
+
 }

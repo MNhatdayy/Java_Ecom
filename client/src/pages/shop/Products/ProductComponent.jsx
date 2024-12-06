@@ -3,14 +3,28 @@ import "./productComponent.scss";
 import { Button } from "antd";
 import { SearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { addToCart } from "../../../services/CartController";
+import { useNavigate } from "react-router-dom";
 const ProductComponent = ({ product }) => {
+	const navigate = useNavigate();
+	const handleAddToCart = (cartId, quantity) => {
+		addToCart(cartId, quantity)
+			.then((response) => {
+				console.log("Cart updated:", response);
+				navigate("/shop/cart");
+			})
+			.catch((error) => {
+				console.error("Error updating cart:", error);
+				// Xử lý lỗi nếu có
+			});
+	};
 	return (
 		<>
 			<div className="product--card">
 				<div className="product--img">
 					<img
 						loading="lazy"
-						src="https://bizweb.dktcdn.net/thumb/large/100/484/752/products/gmk-analog-dreams-digital-nightmares-1688822432975-182787ab-1a77-441b-a409-e932b8c8cf1a.jpg?v=1719248236107"
+						src={`http://localhost:8099${product.imageUrl}`}
 						alt=""
 					/>
 					<div className="info">
@@ -24,8 +38,9 @@ const ProductComponent = ({ product }) => {
 								size="large"
 								type="primary"
 								shape="circle"
-								icon={<ShoppingCartOutlined />}
-							/>
+								onClick={() => handleAddToCart(product.id, 1)}>
+								<ShoppingCartOutlined />
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -33,9 +48,14 @@ const ProductComponent = ({ product }) => {
 					<p className="product--type">KEYCAP</p>
 					<p className="product--name"> Name: {product.name} </p>
 					<p className="product--price">
-						<span className="price-sale">{product.priceSale}</span>
+						{/* <span className="price-sale">{product.priceSale}</span> */}
 
-						<span className="price">{product.price}</span>
+						<span className="price-sale">
+							{new Intl.NumberFormat("vi-VN", {
+								style: "currency",
+								currency: "VND",
+							}).format(product.price)}
+						</span>
 					</p>
 				</div>
 			</div>

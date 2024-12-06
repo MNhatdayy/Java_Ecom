@@ -18,14 +18,14 @@ public class AuthenticationController {
     @PostMapping("/auth/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody User request
-            ){
-       return  ResponseEntity.ok(authenticationService.register(request));
+    ){
+        return  ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/auth/login")
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody User request
-            ){
+    ){
         if (request.getUsername().isEmpty() || request.getPassword().isEmpty()) {
             throw new BadCredentialsException("Invalid username or password");
         }
