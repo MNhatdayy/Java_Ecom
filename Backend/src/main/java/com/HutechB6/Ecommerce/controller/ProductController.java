@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 
@@ -171,10 +172,36 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
     private String saveImageStatic(MultipartFile image) throws IOException {
-        File saveFile = new ClassPathResource("/static/images").getFile();
-        String fileName = UUID.randomUUID()+ "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
-        Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + fileName);
-        Files.copy(image.getInputStream(), path);
+        // Validate image file type (you can add more conditions as needed)
+        String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
+        if (!isValidImageType(fileExtension)) {
+            throw new IOException("Invalid image type: " + fileExtension);
+        }
+
+        // Get the directory for saving images
+        File saveDir = new ClassPathResource("/static/images").getFile();
+
+        // Ensure the directory exists
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();  // Create directories if they do not exist
+        }
+
+        // Generate a unique filename
+        String fileName = UUID.randomUUID() + "." + fileExtension;
+
+        // Create the full path for the new file
+        Path path = Paths.get(saveDir.getAbsolutePath(), fileName);
+
+        // Copy the image to the specified path
+        Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
         return fileName;
     }
+
+    // Helper method to validate image file type
+    private boolean isValidImageType(String extension) {
+        String[] validExtensions = {"jpg", "jpeg", "png", "gif"};
+        return Arrays.asList(validExtensions).contains(extension.toLowerCase());
+    }
+
 }
