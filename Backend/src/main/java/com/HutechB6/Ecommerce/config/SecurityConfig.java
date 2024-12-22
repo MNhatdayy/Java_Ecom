@@ -50,7 +50,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer:: disable)
                 .authorizeHttpRequests(
-                        req -> req.requestMatchers("/login", "/register/**","/css/**", "/js/**", "/images/**", "/","/error","/products")
+                        req -> req.requestMatchers("/api/auth/me","/login", "/api/register/**","/css/**", "/js/**", "/images/**", "/","/error","/products")
                                 .permitAll()
 
                                 .anyRequest()

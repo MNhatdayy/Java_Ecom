@@ -3,6 +3,7 @@ package com.HutechB6.Ecommerce.service;
 import com.HutechB6.Ecommerce.model.AuthenticationResponse;
 import com.HutechB6.Ecommerce.model.User;
 import com.HutechB6.Ecommerce.repository.IUserRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +32,7 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setRole(request.getRole());
-
+        user.setPhone(request.getPhone());
         user = repository.save(user);
 
         String token = jwtService.generateToken(user);
@@ -53,4 +54,18 @@ public class AuthenticationService {
 
         return new AuthenticationResponse(token);
     }
+    public User getCurrentUser(String token) {
+        // Trích xuất username từ token
+        String username = jwtService.extractClaims(token, Claims::getSubject);
+
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Invalid token or user not found");
+        }
+
+        // Tìm kiếm user trong repository
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
+
 }
