@@ -80,7 +80,7 @@ cypress/videos/
 # Ignore public and static files if they are built/generated
 public/
 static/
-
+serviceAccountKey.json
 # Ignore storybook static files
 storybook-static/
 
