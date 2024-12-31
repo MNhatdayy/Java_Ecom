@@ -122,4 +122,9 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.FOUND).header("Location", "http://localhost:5173/error").body(null);
         }
     }
+    @GetMapping("/user/{name}")
+    public ResponseEntity<List<Order>> GetAllOrderByName (@PathVariable String name){
+        List<Order> list = orderService.findOrdersByCustomerName(name);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 }

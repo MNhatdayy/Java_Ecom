@@ -39,5 +39,17 @@ public class UserDetailsServiceImp implements UserDetailsService {
     public Optional<User> findUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+    public User updateUser(long id, User user) {
+        User exitsUser = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if(exitsUser == null){
+            throw new UsernameNotFoundException("User not found");
+        }
+        exitsUser.setUsername(user.getUsername());
+        exitsUser.setAvatar(user.getAvatar());
+        exitsUser.setEmail(user.getEmail());
+        exitsUser.setPhone(user.getPhone());
+        exitsUser.setAvatar(user.getAvatar());
+        return userRepository.save(exitsUser);
+    }
 
 }

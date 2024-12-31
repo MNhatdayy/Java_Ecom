@@ -5,6 +5,7 @@ import com.HutechB6.Ecommerce.model.Product;
 import com.HutechB6.Ecommerce.model.ProductImages;
 
 import com.HutechB6.Ecommerce.service.CategoryService;
+import com.HutechB6.Ecommerce.service.FirebaseService;
 import com.HutechB6.Ecommerce.service.ProductImagesService;
 import com.HutechB6.Ecommerce.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +32,8 @@ import java.util.*;
 @RequestMapping("/api/products")
 public class ProductController {
     private String uploadDir;
-
+    @Autowired
+    private FirebaseService firebaseService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -39,7 +41,7 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping
+    @GetMapping("all")
     public List<Product> getAllProducts(@Nullable @PathParam("category") String category) {
         List<Product> products = productService.getAllProducts();
 
@@ -65,6 +67,7 @@ public class ProductController {
         }
         return list;
     }
+
     @PostMapping
     public ResponseEntity<Product> createProduct(
             @RequestPart("product") String productString,
@@ -79,8 +82,10 @@ public class ProductController {
         product.setCategory(category);
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            String imagePath = saveImageStatic(imageUrl);
-            product.setImageUrl("/images/" + imagePath);
+//            String imagePath = saveImageStatic(imageUrl);
+//            product.setImageUrl("/images/" + imagePath);
+            String imagePath = firebaseService.uploadImages(imageUrl);
+            product.setImageUrl(imagePath);
         }
         Product createdProduct = productService.addProduct(product);
         if (listimg != null && !listimg.isEmpty()) {
@@ -91,8 +96,6 @@ public class ProductController {
                 productImagesService.addProductImage(productImages);
             }
         }
-
-
         return ResponseEntity.ok(createdProduct);
     }
 
@@ -203,5 +206,14 @@ public class ProductController {
         String[] validExtensions = {"jpg", "jpeg", "png", "gif"};
         return Arrays.asList(validExtensions).contains(extension.toLowerCase());
     }
-
+    @GetMapping("/category/{idCategory}")
+    public ResponseEntity<List<Product>> GetProductByIdCategory(@PathVariable Long idCategory){
+        List<Product> products = productService.getProductByIdCategory(idCategory);
+        return ResponseEntity.ok(products);
+    }
+    @GetMapping
+    public ResponseEntity<List<Product>> GetProductByIdCategory(@RequestParam("name") String name){
+        List<Product> products = productService.getProductByName(name);
+        return ResponseEntity.ok(products);
+    }
 }

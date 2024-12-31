@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,5 +55,14 @@ public class OrderService {
     }
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
+    }
+    public List<Order> findOrdersByCustomerName(String customerName) {
+        List<Order> list = new ArrayList<>();
+        for(Order order : findAllOrders()){
+            if(order.getCustomerName().equals(customerName)){
+                list.add(order);
+            }
+        }
+        return list;
     }
 }

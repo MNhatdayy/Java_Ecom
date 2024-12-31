@@ -66,6 +66,22 @@ public class AuthenticationService {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
-
+    public boolean restorePassword(String email, String password) {
+        User user = getCurrentUser(email);
+        if(user == null){
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        try {
+            repository.save(user);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while updating the password.", e);
+        }
+    }
+    public int randomOTP(){
+        int otp = (int) (Math.random() * 900000) + 100000;
+        return otp;
+    }
 
 }

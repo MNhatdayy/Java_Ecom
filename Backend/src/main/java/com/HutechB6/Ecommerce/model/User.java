@@ -1,5 +1,5 @@
 package com.HutechB6.Ecommerce.model;
-
+import java.time.LocalDateTime;
 import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -50,7 +51,8 @@ public class User implements UserDetails {
 
     @Enumerated(value = EnumType.STRING)
     Role role;
-
+    private int otp;
+    private LocalDateTime otpExpiration;
     public Long getId() {
         return id;
     }
@@ -114,5 +116,28 @@ public class User implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    public int getOtp() {
+        return otp;
+    }
+
+    public void setOtp(int otp) {
+        this.otp = otp;
+    }
+
+    public LocalDateTime getOtpExpiration() {
+        return otpExpiration;
+    }
+
+    public void setOtpExpiration(LocalDateTime otpExpiration) {
+        this.otpExpiration = otpExpiration;
+    }
+    private String avatar;
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

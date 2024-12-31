@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,5 +43,23 @@ public class ProductService {
             throw new IllegalStateException("Product with ID " + id + " does not exist.");
         }
         productRepository.deleteById(id);
+    }
+    public List<Product> getProductByIdCategory(Long idCategory) {
+        List<Product> list = new ArrayList<>();
+        for (Product product : getAllProducts()) {
+            if(product.getCategory().getId().equals(idCategory)) {
+                list.add(product);
+            }
+        }
+        return list;
+    }
+    public List<Product> getProductByName(String name) {
+        List<Product> list = new ArrayList<>();
+        for (Product product : getAllProducts()) {
+            if (product.getName().toLowerCase().contains(name.toLowerCase())) {
+                list.add(product);
+            }
+        }
+        return list;
     }
 }

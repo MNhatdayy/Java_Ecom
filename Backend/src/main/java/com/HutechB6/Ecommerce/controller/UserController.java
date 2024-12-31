@@ -21,7 +21,7 @@ public class UserController {
     public UserController(UserDetailsServiceImp userDetailsServiceImp) {
         this.userDetailsServiceImp = userDetailsServiceImp;
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         try {
             userDetailsServiceImp.deleteUser(id);
@@ -38,5 +38,14 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        User user = userDetailsServiceImp.findUserById(id).orElse(null);
+        return ResponseEntity.ok(user);
+    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        var updatedUser = userDetailsServiceImp.updateUser(id, user);
+        return ResponseEntity.ok(updatedUser);
+    }
 }
