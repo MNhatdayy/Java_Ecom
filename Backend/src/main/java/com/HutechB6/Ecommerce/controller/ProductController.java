@@ -81,7 +81,7 @@ public class ProductController {
         Category category = categoryService.getCategoryById(Long.parseLong(CategoryId)).orElseThrow();
         product.setCategory(category);
 
-        if (imageUrl != null && !imageUrl.isEmpty()) {
+		if (imageUrl != null && !imageUrl.isEmpty()) {
 //            String imagePath = saveImageStatic(imageUrl);
 //            product.setImageUrl("/images/" + imagePath);
             String imagePath = firebaseService.uploadImages(imageUrl);
@@ -97,6 +97,7 @@ public class ProductController {
             }
         }
         return ResponseEntity.ok(createdProduct);
+
     }
 
     @GetMapping("/{id}")

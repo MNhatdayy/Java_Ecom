@@ -83,34 +83,69 @@ public class OrderController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+//    @PostMapping("/submit")
+//    public ResponseEntity<?> submitOrder(@RequestParam String customerName,
+//                                         @RequestParam String customerAddress,
+//                                         @RequestParam String customerPhone,
+//                                         @RequestParam int payment,
+//                                         HttpServletRequest request) throws ServletException, IOException {
+//        List<CartItem> cartItems = CartItemService.getCartItemsFull();
+//        if (cartItems.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is empty");
+//        }
+//        if ("cod".equals(payment)) {
+//            orderService.createOrderSubmit(customerName, customerAddress, customerPhone, cartItems);// Assuming a method to clear the cart
+//            return ResponseEntity.ok("Order placed successfully (Cash on Delivery)");
+//        } else if ("vnpay".equals(payment)) {
+//            // Calculate total amount from cart items
+//            double total = cartItems.stream().mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
+//            Long totalAmount = (long) (total * 100); // Convert to VNPay's required format
+//
+//            // Create VNPay payment and retrieve payment URL
+//            PaymentDTO.VNPayResponse payResponse = paymentService.createVnPayPayment(request, totalAmount);
+//            String payUrl = payResponse.getPaymentUrl();
+//            // Optionally clear the cart after successful payment initiation
+//
+//            // Return the payment URL to client
+//            return ResponseEntity.ok(payUrl);
+//        }
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid payment method");
+//    }
+// Submit an order for processing
     @PostMapping("/submit")
-    public ResponseEntity<?> submitOrder(@RequestParam String customerName,
-                                         @RequestParam String customerAddress,
-                                         @RequestParam String customerPhone,
-                                         @RequestParam String payment,
-                                         HttpServletRequest request) throws ServletException, IOException {
-        List<CartItem> cartItems = CartItemService.getCartItemsFull();
-        if (cartItems.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is empty");
-        }
-        if ("cod".equals(payment)) {
-            orderService.createOrderSubmit(customerName, customerAddress, customerPhone, cartItems);// Assuming a method to clear the cart
-            return ResponseEntity.ok("Order placed successfully (Cash on Delivery)");
-        } else if ("vnpay".equals(payment)) {
-            // Calculate total amount from cart items
-            double total = cartItems.stream().mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
-            Long totalAmount = (long) (total * 100); // Convert to VNPay's required format
+    public ResponseEntity<?> submitOrder(@RequestBody OrderCreateRequest orderRequest) {
+        try {
+            // Tìm người dùng từ userId trong yêu cầu
+            User user = userDetailsServiceImp.findUserById(orderRequest.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + orderRequest.getUserId()));
 
-            // Create VNPay payment and retrieve payment URL
-            PaymentDTO.VNPayResponse payResponse = paymentService.createVnPayPayment(request, totalAmount);
-            String payUrl = payResponse.getPaymentUrl();
-            // Optionally clear the cart after successful payment initiation
+            // Kiểm tra phương thức thanh toán
+            Payment payment = paymentService.getPaymentById(orderRequest.getPaymentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy phương thức thanh toán với ID: " + orderRequest.getPaymentId()));
+            List<CartItem> cartItems = CartItemService.findCartItemsByUserId(user.getId());
+            if (cartItems.isEmpty()) {
+                return new ResponseEntity<>("Tạo đơn hành thành công",HttpStatus.OK);
+            }
+            Order createdOrder = orderService.createOrderSubmit(
+                    orderRequest.getCustomerName(),
+                    orderRequest.getCustomerAddress(),
+                    orderRequest.getCustomerPhone(),
+                    cartItems,
+                    user,
+                    payment
+            );
 
-            // Return the payment URL to client
-            return ResponseEntity.ok(payUrl);
+
+            return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            System.err.println("Không tìm thấy thực thể: " + e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi trong quá trình xử lý đơn hàng", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid payment method");
     }
+
     @GetMapping("/confirmation")
     public ResponseEntity<String> paymentConfirmation(
             @RequestParam("vnp_ResponseCode") String responseCode) {
@@ -127,4 +162,5 @@ public class OrderController {
         List<Order> list = orderService.findOrdersByCustomerName(name);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
 }

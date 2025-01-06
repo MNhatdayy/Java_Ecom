@@ -26,14 +26,15 @@ public class OrderDetailService {
     @Autowired
     private IOrderRepository orderRepository;
     public List<OrderDetail> getOrderDetail(Long idOrder) {
-        List<OrderDetail> orderDetails = orderDetailRepository.findAll();
-        List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
-        for (OrderDetail orderDetail : orderDetails) {
-            if(orderDetail.getOrder().getId().equals(idOrder)) {
-                orderDetailList.add(orderDetail);
-            }
-        }
-        return orderDetailList;
+//        List<OrderDetail> orderDetails = orderDetailRepository.findAll();
+//        List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
+//        for (OrderDetail orderDetail : orderDetails) {
+//            if(orderDetail.getOrder().getId().equals(idOrder)) {
+//                orderDetailList.add(orderDetail);
+//            }
+//        }
+//        return orderDetailList;
+        return orderDetailRepository.findByOrderId(idOrder);
     }
 
 }

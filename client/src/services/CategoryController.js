@@ -2,7 +2,7 @@ import axios from "axios";
 import { notification } from "antd";
 export const fetchCategories = async (setCategories) => {
   try {
-    const response = await axios.get("http://localhost:8099/api/categories");
+    const response = await axios.get("http://localhost:8099/api/categories/all");
     setCategories(response.data);
   } catch (error) {
     console.error("Error fetching categories:", error);

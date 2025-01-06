@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -38,7 +39,7 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
-    @GetMapping("/{id}")
+ 	@GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         User user = userDetailsServiceImp.findUserById(id).orElse(null);
         return ResponseEntity.ok(user);
@@ -48,4 +49,5 @@ public class UserController {
         var updatedUser = userDetailsServiceImp.updateUser(id, user);
         return ResponseEntity.ok(updatedUser);
     }
+
 }

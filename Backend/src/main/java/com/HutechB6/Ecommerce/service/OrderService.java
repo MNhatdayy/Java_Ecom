@@ -28,13 +28,20 @@ public class OrderService {
     @Autowired
     private IUserRepository userRepository;
     @Transactional
-    public Order createOrderSubmit(String customerName, String customerAddress, String customerPhone, List<CartItem> cartItems) {
+    public Order createOrderSubmit(String customerName, String customerAddress, String customerPhone, List<CartItem> cartItems,User user,
+                                   Payment payment) {
+        // Create a new order object
         Order order = new Order();
         order.setCustomerName(customerName);
         order.setCustomerAddress(customerAddress);
         order.setCustomerPhone(customerPhone);
+        order.setUser(user);
+        order.setPayment(payment);
 
+        // Save the order
         order = orderRepository.save(order);
+
+        // Save order details for each item in the cart
         for (CartItem item : cartItems) {
             OrderDetail detail = new OrderDetail();
             detail.setOrder(order);
@@ -42,8 +49,10 @@ public class OrderService {
             detail.setQuantity(item.getQuantity());
             orderDetailRepository.save(detail);
         }
-        // Optionally clear the cart after order placement
-        cartItemRepository.clear();
+
+        // Optionally clear the cart after the order is placed
+        cartItemRepository.deleteAll(cartItems);
+
         return order;
     }
 

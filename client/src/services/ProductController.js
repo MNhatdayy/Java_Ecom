@@ -3,7 +3,7 @@ import { notification } from "antd";
 
 export const fetchProducts = async (setProducts) => {
   try {
-    const response = await axios.get("http://localhost:8099/api/products");
+    const response = await axios.get("http://localhost:8099/api/products/all");
     setProducts(response.data);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -70,14 +70,18 @@ export const createProduct = async (
 
     const formData = new FormData();
     formData.append("product", JSON.stringify(product));
-    if (imageUrl) {
+
+    // Append imageUrl only if it is a file (not a URL)
+    if (imageUrl instanceof File) {
       formData.append("imageUrl", imageUrl);
     }
+
+    // Append additional images if any
     moreImages.forEach((image) => {
       formData.append("images", image);
     });
+
     formData.append("categoryId", categoryId);
-    console.log(formData);
 
     const response = await axios.post(
       "http://localhost:8099/api/products",

@@ -27,6 +27,7 @@ public class OrderDetailController {
             orderDetailDTO.setId(orderDetail.getId());
             orderDetailDTO.setQuantity(orderDetail.getQuantity());
             orderDetailDTO.setProductId(orderDetail.getProduct().getId());
+            orderDetailDTO.setOrderId(orderDetail.getOrder().getId());
             orderDetailDTOs.add(orderDetailDTO);
         }
 

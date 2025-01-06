@@ -29,8 +29,12 @@ public class CartItemService {
     private ICartItemRepository cartItemRepository;
 
     public List<CartItem> getCartItemsFull(){
-
         return cartItemRepository.findAllCartItemsWithProductAndUser();
+    }
+    // Method to find cart items by userId
+    public List<CartItem> findCartItemsByUserId(Long userId) {
+        // Retrieve all cart items for the specified userId
+        return cartItemRepository.findByUserId(userId);
     }
     public Optional<CartItem> getCartById(Long id) {
         return cartItemRepository.findById(id);
@@ -88,4 +92,7 @@ public class CartItemService {
     public void clearCart() {
         cartItemRepository.clear();
     }
+
+
+
 }

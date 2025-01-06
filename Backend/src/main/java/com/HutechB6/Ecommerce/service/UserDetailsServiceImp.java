@@ -30,6 +30,10 @@ public class UserDetailsServiceImp implements UserDetailsService {
             userRepository.delete(user);
         }
     }
+    public UserDetails loadUserById(Long userId) {
+        Optional<User> userDetails = userRepository.findById(userId);
+        return userDetails.orElse(null);  // Return null if user not found
+    }
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
