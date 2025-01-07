@@ -86,16 +86,15 @@ public class ProductController {
 //            product.setImageUrl("/images/" + imagePath);
             String imagePath = firebaseService.uploadImages(imageUrl);
             product.setImageUrl(imagePath);
-        }
-        Product createdProduct = productService.addProduct(product);
-        if (listimg != null && !listimg.isEmpty()) {
-            for (MultipartFile file : listimg) {
-                ProductImages productImages = new ProductImages();
-                productImages.setProduct(createdProduct);
-                productImages.setPathImage(saveImageStatic(file));
-                productImagesService.addProductImage(productImages);
-            }
-        }
+        }        Product createdProduct = productService.addProduct(product);
+//        if (listimg != null && !listimg.isEmpty()) {
+//            for (MultipartFile file : listimg) {
+//                ProductImages productImages = new ProductImages();
+//                productImages.setProduct(createdProduct);
+//                productImages.setPathImage(saveImageStatic(file));
+//                productImagesService.addProductImage(productImages);
+//            }
+//        }
         return ResponseEntity.ok(createdProduct);
 
     }

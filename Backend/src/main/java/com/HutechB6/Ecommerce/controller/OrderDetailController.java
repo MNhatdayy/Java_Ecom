@@ -1,6 +1,7 @@
 package com.HutechB6.Ecommerce.controller;
 
 import com.HutechB6.Ecommerce.DTO.OrderDetailDTO;
+import com.HutechB6.Ecommerce.DTO.OrderDetailResponse;
 import com.HutechB6.Ecommerce.model.OrderDetail;
 import com.HutechB6.Ecommerce.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,15 @@ public class OrderDetailController {
     private OrderDetailService orderDetailService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<OrderDetailDTO>> getOrderDetailById(@PathVariable Long id) {
+    public ResponseEntity<List<OrderDetailResponse>> getOrderDetailById(@PathVariable Long id) {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetail(id);
-        List<OrderDetailDTO> orderDetailDTOs = new ArrayList<>();
+        List<OrderDetailResponse> orderDetailDTOs = new ArrayList<>();
 
         for (OrderDetail orderDetail : orderDetails) {
-            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+            OrderDetailResponse orderDetailDTO = new OrderDetailResponse();
             orderDetailDTO.setId(orderDetail.getId());
             orderDetailDTO.setQuantity(orderDetail.getQuantity());
-            orderDetailDTO.setProductId(orderDetail.getProduct().getId());
+            orderDetailDTO.setProduct(orderDetail.getProduct());
             orderDetailDTO.setOrderId(orderDetail.getOrder().getId());
             orderDetailDTOs.add(orderDetailDTO);
         }
